@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/app/lib/auth";
+import DashboardPage from "@/modules/dashboard/ui/components/dashboard-view";
 // import Homeview from "@/modules/home/ui/views/home-view";
 // import { caller } from "@/trpc/server";
 
@@ -21,7 +22,8 @@ const page = async () => {
   // const data = await caller.agents.getMany({}); 
 
   // return <Homeview data={data.items} />
-  return <div>Dashboard Home Page</div>
+  return <DashboardPage/>
 }
 
 export default page
+
