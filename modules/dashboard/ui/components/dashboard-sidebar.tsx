@@ -17,21 +17,32 @@ import {
     SidebarMenuItem,
     SidebarMenuButton
  } from "@/components/ui/sidebar";
-import {  BotIcon, StarIcon, VideoIcon } from "lucide-react";
+import {  StarIcon, HomeIcon, ListIcon, BarChartIcon, BellIcon,LayoutDashboard, Layers, ChartPie  } from "lucide-react";
+
 // import { DashboardUserButton } from "./dashboard-user-button";
 // import { DashboardTrail } from "./dashboard-trail";
 
 
  const firstSection = [
     {
-        label: "Meetings",
-        href: "/meetings",
-        icon: VideoIcon
+        label: "Dashboard",
+        href: "/",
+        icon: LayoutDashboard 
     },
     {
-        label: "Agents",
-        href: "/agents",
-        icon: BotIcon
+        label: "Categories",
+        href: "/categories",
+        icon: Layers
+    },
+    {
+        label: "Analytics",
+        href: "/analytics",
+        icon: ChartPie
+    },
+    {
+        label: "Notifications",
+        href: "/notifications",
+        icon: BellIcon
     }
 ]
  const secondSection = [
@@ -45,11 +56,11 @@ import {  BotIcon, StarIcon, VideoIcon } from "lucide-react";
 export const DashboardSidebar = () => {
     const pathname = usePathname();
     return (
-        <Sidebar>
+        <Sidebar className="bg-sidebar">
             <SidebarHeader>
-                <Link href={"/"} className="flex items-center gap-2 px-2 pt-2">
-                    <Image src={"/logo.svg"} alt="logo" width={36} height={36}/>
-                    <p className="text-2xl text-sidebar-primary-foreground font-semibold">Convo/AI</p>
+                <Link href={"/"} className="flex items-center gap-4 px-2 pt-2">
+                    <Image src={"/logo.svg"} alt="logo" width={32} height={32}/>
+                    <p className="text-2xl text-sidebar-primary-foreground font-semibold">SpendFlow</p>
                 </Link>
             </SidebarHeader>
             <div className="px-4 py-2">
@@ -63,20 +74,22 @@ export const DashboardSidebar = () => {
                             {firstSection.map((item) => (
                                 <SidebarMenuItem key={item.label}>
                                     <SidebarMenuButton
-                                    asChild
-                                    className={cn("h-10 hover:bg-linear-to-r/oklch border border-transparent hover:border-[#5D6B68]/10 from-5% via-30% via-sidebar/50 to-sidebar/50",
-                                        pathname === item.href && "bg-linear-to-r/oklch border-[#5D6B68]/10"
-                                    )}
-                                    isActive={pathname === item.href}
-                                    >
-                                        <Link href={item.href} 
+                                        asChild
+                                        isActive={pathname === item.href}
+                                        className="h-10 hover:bg-linear-to-r/oklch 
+                                                    border border-transparent 
+                                                    hover:border-[#5D6B68]/10
+                                                    data-[active=true]:bg-primary
+                                                    data-[active=true]:border-[#5D6B68]/10"
+                                                    
                                         >
-                                            <item.icon className="size-5"/>
-                                            <span className="text-sm font-medium tracking-tight">
-                                                {item.label}
-                                            </span>
-                                        </Link>
-                                    </SidebarMenuButton>
+                                            <Link href={item.href}>
+                                                <item.icon className="text-foreground w-5 h-5" />
+                                                <span className="ml-2 text-sm font-medium tracking-tight">
+                                                    {item.label}
+                                                </span>
+                                            </Link>
+                                        </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
                         </SidebarMenu>
@@ -99,7 +112,7 @@ export const DashboardSidebar = () => {
                                     >
                                         <Link href={item.href} 
                                         >
-                                            <item.icon className="size-5"/>
+                                            <item.icon size={22} className="text-foreground"/>
                                             <span className="text-sm font-medium tracking-tight">
                                                 {item.label}
                                             </span>

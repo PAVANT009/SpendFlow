@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, numeric, integer, } from "drizzle-orm/pg-core";
 
 
 export const user = pgTable("user", {
@@ -45,7 +45,47 @@ export const verification = pgTable("verification", {
  expiresAt: timestamp('expires_at').notNull(),
  createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
  updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date())
-				});
+});
 
 
+export const subscription = pgTable("subscription", {
+  id: text("id").primaryKey(),
 
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  name: text("name").notNull(),
+
+  category: text("category").notNull(),
+
+  description: text("description"),
+
+  url: text("url"),
+
+  amount: numeric("amount") // better than integer for decimals
+    .notNull(),
+
+  currency: text("currency").notNull(), // e.g. USD, INR
+
+  // Cycle fields
+  cycleType: text("cycle_type").notNull(), // "month" or "year"
+  cycleCount: integer("cycle_count").notNull(), // 1, 3, 6, 12 etc.
+
+  // Billing dates
+  startBilling: timestamp("start_billing").notNull(),
+  nextBilling: timestamp("next_billing").notNull(),
+
+  // Reminder toggle
+  reminder: boolean("reminder")
+    .$defaultFn(() => false)
+    .notNull(),
+
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
