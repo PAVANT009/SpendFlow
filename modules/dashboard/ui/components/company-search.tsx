@@ -72,8 +72,8 @@ export default function CompanySearch({ onSelect }: { onSelect?: (c: Subscriptio
               type="text"
               placeholder="Search company..."
               className="
-                focus:ring-2 focus:ring-primary
-                outline-none w-full px-4 py-2 rounded-md
+                focus:ring-2 focus:ring-primary text-sm
+                outline-none w-full px-2 py-2 rounded-md
                 border border-input 
                 focus:border-primary
               "
