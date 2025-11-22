@@ -43,10 +43,12 @@ export default function MyForm() {
 
   // Shared class for all inputs
   const inputClass =
-    "border border-input px-2 py-2 rounded w-full text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary";
+    "border border-input px-2 py-1 rounded w-full text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary";
+
+  const secondClass = "border border-input px-2 py-2 rounded w-[40%] text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary ";
 
   const smallInputClass =
-    "border border-input px-2 py-1 rounded text-sm w-[48%] outline-none focus:border-primary focus:ring-2 focus:ring-primary";
+    "border border-input px-2 py-1 rounded text-sm w-full outline-none focus:border-primary focus:ring-2 focus:ring-primary";
 
   const textareaClass =
     "border border-input p-2 rounded w-full text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary";
@@ -54,7 +56,6 @@ export default function MyForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       
-      {/* FIRST ROW */}
       <div className="flex flex-row gap-2 w-full">
         
         <input
@@ -126,44 +127,67 @@ export default function MyForm() {
         </p>
       </div>
 
-      <input
-        {...register("amount", { required: true })}
-        type="number"
-        step="0.01"
-        className={inputClass}
-        placeholder="Amount"
-      />
-      {errors.amount && <p className="text-red-500 text-sm">Required</p>}
+        <div className="flex flex-row gap-3 w-full">
+        <input
+          {...register("amount", { required: true })}
+          type="number"
+          step="0.01"
+          className={inputClass}
+          placeholder="Amount"
+        />
+        {errors.amount && <p className="text-red-500 text-sm">Required</p>}
 
-        <Controller
-          control={control}
-          name="currency"
-          rules={{ required: true }}
-          render={({ field }) => (
-            <CurrencySelect
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
+          <Controller
+            control={control}
+            name="currency"
+            rules={{ required: true }}
+            render={({ field }) => (
+              <CurrencySelect
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+
+        {errors.currency && (
+          <p className="text-red-500 text-sm">Required</p>
+        )}
+      </div>
+
+      <div className="flex  justify-between gap-1">
+      <Controller
+        control={control}
+        name="cycleType"
+        rules={{ required: true }}
+        render={({ field }) => (
+          <Select onValueChange={field.onChange} value={field.value}>
+            <SelectTrigger className={`${smallInputClass} w-[50%]`}>
+              <SelectValue placeholder="Cycle Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="month">Month</SelectItem>
+              <SelectItem value="year">Year</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+      />
+
+
+        {errors.cycleType && (
+          <p className="text-red-500 text-sm">Required</p>
+        )}
+
+        <input
+          {...register("cycleCount", { required: true })}
+          type="number"
+          className={` w-[48%]! ${secondClass}`}
+          placeholder="Cycle Count"
         />
 
-      {errors.currency && (
-        <p className="text-red-500 text-sm">Required</p>
-      )}
-
-      <select {...register("cycleType", { required: true })} className={inputClass}>
-        <option value="month">Month</option>
-        <option value="year">Year</option>
-      </select>
-      {errors.cycleType && <p className="text-red-500 text-sm">Required</p>}
-
-      <input
-        {...register("cycleCount", { required: true })}
-        type="number"
-        className={inputClass}
-        placeholder="Cycle Count"
-      />
-      {errors.cycleCount && <p className="text-red-500 text-sm">Required</p>}
+        {errors.cycleCount && (
+          <p className="text-red-500 text-sm">Required</p>
+        )}
+      </div>
 
       <hr className="w-full" />
 
@@ -209,7 +233,7 @@ export default function MyForm() {
           </p>
         </div>
 
-        <Switch className="cursor-pointer" {...register("reminder")} />
+        <Switch className="cursor-pointer scale-125" {...register("reminder")} />
       </label>
     </form>
   );

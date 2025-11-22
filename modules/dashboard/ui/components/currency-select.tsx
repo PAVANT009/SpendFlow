@@ -83,7 +83,7 @@ export function CurrencySelect({ value, onChange }: {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[48%] justify-between"
+          className="w-[48%] justify-between text-sm"
         >
           {value
             ? currencies.find((c) => c.value === value)?.symbol +
