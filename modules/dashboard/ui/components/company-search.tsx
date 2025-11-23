@@ -1,4 +1,3 @@
-// company-search.tsx
 "use client";
 
 import { Subscription } from "@/types/Subscription";
@@ -6,13 +5,16 @@ import { Info } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import MyForm from "./MyForm";
+import { useRouter } from "next/navigation";
 
 export default function CompanySearch({ onSelect }: { onSelect?: (c: Subscription) => void }) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Subscription[]>([]);
   const [selected, setSelected] = useState<Subscription>();
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!query) {
@@ -33,7 +35,6 @@ export default function CompanySearch({ onSelect }: { onSelect?: (c: Subscriptio
     return () => clearTimeout(delay);
   }, [query]);
 
-  // Hide dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -44,6 +45,48 @@ export default function CompanySearch({ onSelect }: { onSelect?: (c: Subscriptio
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+const handleFormSubmit = async (formData: Subscription) => {
+  console.log("Form data:", formData); // Check what's being submitted
+  
+  try {
+    setSubmitting(true);
+
+    const subscriptionData = {
+      ...formData,
+      logo_url: selected?.logo_url,
+      url: selected?.url || formData.url,
+    };
+    
+    console.log("Sending data:", subscriptionData); // Check merged data
+
+    const res = await fetch("/api/subscriptions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(subscriptionData),
+    });
+
+    console.log("Response status:", res.status); // Check response
+    const responseData = await res.json();
+    console.log("Response data:", responseData);
+
+    if (!res.ok) {
+      throw new Error(responseData.error || "Failed to create subscription");
+    }
+
+    setQuery("");
+    setSelected(undefined);
+    router.push("/subscriptions");
+    router.refresh();
+  } catch (error) {
+    console.error("Error submitting subscription:", error);
+    alert(`Error: ${error.message}`); // Show error to user
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <div ref={containerRef} className="w-full flex flex-col gap-4">
@@ -90,7 +133,7 @@ export default function CompanySearch({ onSelect }: { onSelect?: (c: Subscriptio
                 {suggestions.map((s)  => (
                   <div
                     key={s.url}
-                    className="px-5 py-2.5 flex flex-row hover:bg-primary cursor-pointer hover:rounded-md"
+                    className="px-5 py-2.5 flex flex-row gap-3 items-center hover:bg-primary cursor-pointer hover:rounded-md"
                     onClick={() => {
                       setSelected(s);
                       setQuery(s.name);
@@ -108,7 +151,14 @@ export default function CompanySearch({ onSelect }: { onSelect?: (c: Subscriptio
           </div>
         </div>
 
-        <MyForm />
+        <MyForm 
+          onSubmit={handleFormSubmit}
+          submitting={submitting}
+          defaultValues={selected ? {
+            name: selected.name,
+            url: selected.url,
+          } : undefined}
+        />
       </div>
 
       {loading && query && (
@@ -116,10 +166,10 @@ export default function CompanySearch({ onSelect }: { onSelect?: (c: Subscriptio
       )}
 
       {selected && (
-        <div className="mt-4 text-center">
-          <h3 className="font-semibold">{selected.name}</h3>
+        <div className="mt-4 p-4 border border-input rounded-md">
+          <h3 className="font-semibold text-center">{selected.name}</h3>
           <Image
-            src={`https://img.logo.dev/${selected.url}?size=80&token=${process.env.NEXT_PUBLIC_LOGODEV_PUBLISHABLE_KEY}`}
+            src={selected.logo_url}
             alt={selected.name}
             className="mx-auto mt-2"
             width={80}

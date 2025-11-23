@@ -63,29 +63,22 @@ export const subscription = pgTable("subscription", {
 
   url: text("url"),
 
-  amount: numeric("amount") // better than integer for decimals
-    .notNull(),
+  amount: numeric("amount").notNull(),
 
-  currency: text("currency").notNull(), // e.g. USD, INR
+  currency: text("currency").notNull(),
 
-  // Cycle fields
-  cycleType: text("cycle_type").notNull(), // "month" or "year"
-  cycleCount: integer("cycle_count").notNull(), // 1, 3, 6, 12 etc.
+  cycleType: text("cycle_type").notNull(),
 
-  // Billing dates
+  cycleCount: integer("cycle_count").notNull(),
+
   startBilling: timestamp("start_billing").notNull(),
+
   nextBilling: timestamp("next_billing").notNull(),
 
-  // Reminder toggle
-  reminder: boolean("reminder")
-    .$defaultFn(() => false)
-    .notNull(),
+  reminder: boolean("reminder").$defaultFn(() => false).notNull(),
 
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("created_at").$defaultFn(() => new Date()).notNull(),
 
-  updatedAt: timestamp("updated_at")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()).notNull(),
 });
+

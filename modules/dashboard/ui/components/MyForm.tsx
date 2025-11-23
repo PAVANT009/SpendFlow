@@ -11,41 +11,70 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { currencyOptions } from "@/data/currency-options";
-import { CommandSelect } from "@/components/ui/command-select";
 import { CurrencySelect } from "./currency-select";
+import { useEffect } from "react";
 
-interface Option {
-  value: string;
-  label: string;
+function formatDate(d: Date) {
+  return d.toISOString().split("T")[0];
 }
 
-interface CommandSelectProps {
-  placeholder?: string;
-  value?: string;
-  options: Option[];
-  onSelect: (value: string) => void;
-  className?: string;
+interface MyFormProps {
+  onSubmit?: (data: Subscription) => void | Promise<void>;
+  submitting?: boolean;
+  defaultValues?: Partial<Subscription>;
 }
 
-
-export default function MyForm() {
+export default function MyForm({ onSubmit, submitting = false, defaultValues }: MyFormProps) {
   const {
     register,
     handleSubmit,
     control,
+    setValue,
+    watch,
+    reset,
     formState: { errors },
-  } = useForm<Subscription>();
+  } = useForm<Subscription>({
+    defaultValues,
+  });
 
-  const onSubmit = (data: Subscription) => {
-    console.log(data);
+  const cycleType = watch("cycleType");
+  const cycleCount = watch("cycleCount");
+
+  // Update default values when they change
+  useEffect(() => {
+    if (defaultValues) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, reset]);
+
+  useEffect(() => {
+    if (!cycleType || !cycleCount) return;
+
+    const today = new Date();
+    const startDate = today;
+    const nextDate = new Date(today);
+
+    if (cycleType === "month") {
+      nextDate.setMonth(today.getMonth() + Number(cycleCount));
+    } else if (cycleType === "year") {
+      nextDate.setFullYear(today.getFullYear() + Number(cycleCount));
+    }
+
+    setValue("startBilling", formatDate(startDate));
+    setValue("nextBilling", formatDate(nextDate));
+  }, [cycleType, cycleCount, setValue]);
+
+  const handleFormSubmit = (data: Subscription) => {
+    if (onSubmit) {
+      onSubmit(data);
+    }
   };
 
-  // Shared class for all inputs
   const inputClass =
     "border border-input px-2 py-1 rounded w-full text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary";
 
-  const secondClass = "border border-input px-2 py-2 rounded w-[40%] text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary ";
+  const secondClass =
+    "border border-input px-2 py-2 rounded w-[40%] text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary ";
 
   const smallInputClass =
     "border border-input px-2 py-1 rounded text-sm w-full outline-none focus:border-primary focus:ring-2 focus:ring-primary";
@@ -54,45 +83,46 @@ export default function MyForm() {
     "border border-input p-2 rounded w-full text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary";
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <div className="flex flex-row gap-2 w-full">
-        
-        <input
-          {...register("name", { required: true })}
-          className={smallInputClass}
-          placeholder="Subscription Name"
-        />
-        {errors.name && (
-          <p className="text-red-500 text-sm">Required</p>
-        )}
-
-        <Controller
-          control={control}
-          name="category"
-          rules={{ required: true }}
-          render={({ field }) => (
-            <Select
-              onValueChange={(value) => field.onChange(value)}
-              value={field.value}
-            >
-              <SelectTrigger className={`${smallInputClass} w-[48%]`}>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Entertainment">Entertainment</SelectItem>
-                <SelectItem value="Productivity">Productivity</SelectItem>
-                <SelectItem value="Health & Fitness">Health & Fitness</SelectItem>
-                <SelectItem value="Development">Development</SelectItem>
-                <SelectItem value="Cloud">Cloud</SelectItem>
-                <SelectItem value="Learning">Learning</SelectItem>
-              </SelectContent>
-            </Select>
+        <div className="flex-1">
+          <input
+            {...register("name", { required: "Subscription name is required" })}
+            className={smallInputClass}
+            placeholder="Subscription Name"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
           )}
-        />
-        {errors.category && (
-          <p className="text-red-500 text-sm">Required</p>
-        )}
+        </div>
+
+        <div className="w-[48%]">
+          <Controller
+            control={control}
+            name="category"
+            rules={{ required: "Category is required" }}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger className={smallInputClass}>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Entertainment">Entertainment</SelectItem>
+                  <SelectItem value="Productivity">Productivity</SelectItem>
+                  <SelectItem value="Health & Fitness">
+                    Health & Fitness
+                  </SelectItem>
+                  <SelectItem value="Development">Development</SelectItem>
+                  <SelectItem value="Cloud">Cloud</SelectItem>
+                  <SelectItem value="Learning">Learning</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.category && (
+            <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>
+          )}
+        </div>
       </div>
 
       <textarea
@@ -112,7 +142,7 @@ export default function MyForm() {
       </div>
 
       <input {...register("url")} className={inputClass} placeholder="URL" />
-
+      
       <textarea
         {...register("notes")}
         className={textareaClass + " h-32"}
@@ -127,66 +157,60 @@ export default function MyForm() {
         </p>
       </div>
 
-        <div className="flex flex-row gap-3 w-full">
-        <input
-          {...register("amount", { required: true })}
-          type="number"
-          step="0.01"
-          className={inputClass}
-          placeholder="Amount"
-        />
-        {errors.amount && <p className="text-red-500 text-sm">Required</p>}
-
-          <Controller
-            control={control}
-            name="currency"
-            rules={{ required: true }}
-            render={({ field }) => (
-              <CurrencySelect
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
+      <div className="flex flex-row gap-3 w-full">
+        <div className="flex-1">
+          <input
+            {...register("amount", { 
+              required: "Amount is required",
+              min: { value: 0.01, message: "Amount must be greater than 0" }
+            })}
+            type="number"
+            step="0.01"
+            className={inputClass}
+            placeholder="Amount"
           />
+          {errors.amount && (
+            <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
+          )}
+        </div>
 
-        {errors.currency && (
-          <p className="text-red-500 text-sm">Required</p>
-        )}
+        <Controller
+          control={control}
+          name="currency"
+          rules={{ required: "Currency is required" }}
+          render={({ field }) => (
+            <CurrencySelect value={field.value} onChange={field.onChange} />
+          )}
+        />
       </div>
 
-      <div className="flex  justify-between gap-1">
-      <Controller
-        control={control}
-        name="cycleType"
-        rules={{ required: true }}
-        render={({ field }) => (
-          <Select onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger className={`${smallInputClass} w-[50%]`}>
-              <SelectValue placeholder="Cycle Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="month">Month</SelectItem>
-              <SelectItem value="year">Year</SelectItem>
-            </SelectContent>
-          </Select>
-        )}
-      />
-
-
-        {errors.cycleType && (
-          <p className="text-red-500 text-sm">Required</p>
-        )}
-
-        <input
-          {...register("cycleCount", { required: true })}
-          type="number"
-          className={` w-[48%]! ${secondClass}`}
-          placeholder="Cycle Count"
+      <div className="flex justify-between gap-1">
+        <Controller
+          control={control}
+          name="cycleType"
+          rules={{ required: "Cycle type is required" }}
+          render={({ field }) => (
+            <Select onValueChange={field.onChange} value={field.value}>
+              <SelectTrigger className={`${smallInputClass} w-[50%]`}>
+                <SelectValue placeholder="Cycle Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="month">Month</SelectItem>
+                <SelectItem value="year">Year</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
         />
 
-        {errors.cycleCount && (
-          <p className="text-red-500 text-sm">Required</p>
-        )}
+        <input
+          {...register("cycleCount", { 
+            required: "Cycle count is required",
+            min: { value: 1, message: "Must be at least 1" }
+          })}
+          type="number"
+          className={`w-[48%]! ${secondClass}`}
+          placeholder="Cycle Count"
+        />
       </div>
 
       <hr className="w-full" />
@@ -200,19 +224,33 @@ export default function MyForm() {
       </div>
 
       <div className="flex flex-row gap-2">
-        <input
-          {...register("startBilling", { required: true })}
-          type="date"
-          className={inputClass}
+        <Controller
+          control={control}
+          name="startBilling"
+          rules={{ required: "Start billing date is required" }}
+          render={({ field }) => (
+            <input
+              type="date"
+              className={inputClass}
+              value={field.value || ""}
+              onChange={field.onChange}
+            />
+          )}
         />
-        {errors.startBilling && <p className="text-red-500 text-sm">Required</p>}
 
-        <input
-          {...register("nextBilling", { required: true })}
-          type="date"
-          className={inputClass}
+        <Controller
+          control={control}
+          name="nextBilling"
+          rules={{ required: "Next billing date is required" }}
+          render={({ field }) => (
+            <input
+              type="date"
+              className={inputClass}
+              value={field.value || ""}
+              onChange={field.onChange}
+            />
+          )}
         />
-        {errors.nextBilling && <p className="text-red-500 text-sm">Required</p>}
       </div>
 
       <hr className="w-full" />
@@ -227,14 +265,39 @@ export default function MyForm() {
 
       <label className="flex items-center justify-between w-full">
         <div>
-          <span className="text-foreground">Set reminder for this subscription</span>
+          <span className="text-foreground">
+            Set reminder for this subscription
+          </span>
           <p className="text-muted-foreground text-sm">
             Get notified at a specific time before renewal
           </p>
         </div>
 
-        <Switch className="cursor-pointer scale-125" {...register("reminder")} />
+        <Controller
+          control={control}
+          name="reminder"
+          render={({ field }) => (
+            <Switch 
+              className="cursor-pointer scale-125"
+              checked={field.value}
+              onCheckedChange={field.onChange}
+            />
+          )}
+        />
       </label>
+
+      <button
+        type="submit"
+        disabled={submitting}
+        className="
+          w-full bg-primary text-primary-foreground 
+          py-2.5 rounded-md font-medium
+          hover:opacity-90 transition-opacity
+          disabled:opacity-50 disabled:cursor-not-allowed
+        "
+      >
+        {submitting ? "Adding Subscription..." : "Add Subscription"}
+      </button>
     </form>
   );
 }

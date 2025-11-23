@@ -12,21 +12,11 @@ import {
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
+import { currencyOptions } from "@/data/currency-options";
+
 import { cn } from "@/lib/utils";
 
-const currencies = [
-  { value: "INR", label: "Indian Rupee", symbol: "₹" },
-  { value: "USD", label: "US Dollar", symbol: "$" },
-  { value: "EUR", label: "Euro", symbol: "€" },
-  { value: "GBP", label: "British Pound", symbol: "£" },
-  { value: "JPY", label: "Japanese Yen", symbol: "¥" },
-  { value: "AUD", label: "Australian Dollar", symbol: "A$" },
-  { value: "CAD", label: "Canadian Dollar", symbol: "C$" },
-  { value: "SGD", label: "Singapore Dollar", symbol: "S$" },
-  { value: "CHF", label: "Swiss Franc", symbol: "Fr" },
-  { value: "CNY", label: "Chinese Yuan", symbol: "¥" }
-  // add more if needed
-];
+const currencies = currencyOptions;
 
 export function CurrencySelect({ value, onChange }: {
   value: string;
@@ -35,7 +25,6 @@ export function CurrencySelect({ value, onChange }: {
   const [open, setOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Handle scroll events to prevent parent scrolling interference
   useEffect(() => {
     if (!open) return;
     
@@ -43,22 +32,18 @@ export function CurrencySelect({ value, onChange }: {
       const popoverContent = contentRef.current;
       if (!popoverContent) return;
 
-      // Find the CommandList element
       const commandList = popoverContent.querySelector('[data-slot="command-list"]') as HTMLElement;
       if (!commandList) return;
 
       const handleWheel = (e: WheelEvent) => {
-        // Always stop propagation to prevent parent scroll
         e.stopPropagation();
       };
 
       const handleTouchStart = (e: TouchEvent) => {
-        // Prevent parent from scrolling when touching the popover
         e.stopPropagation();
       };
 
       const handleTouchMove = (e: TouchEvent) => {
-        // Allow scrolling within the list but prevent parent scroll
         e.stopPropagation();
       };
 
@@ -83,7 +68,7 @@ export function CurrencySelect({ value, onChange }: {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[48%] justify-between text-sm"
+          className="w-[48%] justify-between text-sm text-muted-foreground"
         >
           {value
             ? currencies.find((c) => c.value === value)?.symbol +
