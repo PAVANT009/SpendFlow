@@ -21,31 +21,49 @@ function formatDate(d: Date) {
 interface MyFormProps {
   onSubmit?: (data: Subscription) => void | Promise<void>;
   submitting?: boolean;
-  defaultValues?: Partial<Subscription>;
+  initialValues?: Partial<Subscription>;
+  prefillValues?: Partial<Subscription>;
 }
 
-export default function MyForm({ onSubmit, submitting = false, defaultValues }: MyFormProps) {
+export default function MyForm({ onSubmit, submitting = false, initialValues, prefillValues }: MyFormProps) {
   const {
     register,
     handleSubmit,
     control,
     setValue,
     watch,
-    reset,
     formState: { errors },
   } = useForm<Subscription>({
-    defaultValues,
+    defaultValues: {
+        url: initialValues?.url ?? "", 
+      category: initialValues?.category ?? "Entertainment",
+      reminder: initialValues?.reminder ?? false,
+      cycleType: initialValues?.cycleType ?? "month",
+      cycleCount: initialValues?.cycleCount ?? 1,
+      ...initialValues,
+    }
   });
 
   const cycleType = watch("cycleType");
   const cycleCount = watch("cycleCount");
 
-  // Update default values when they change
-  useEffect(() => {
-    if (defaultValues) {
-      reset(defaultValues);
-    }
-  }, [defaultValues, reset]);
+useEffect(() => {
+  if (!prefillValues) return;
+
+  console.log(prefillValues);
+  type SubscriptionKey = keyof Subscription;
+
+  (Object.entries(prefillValues) as [SubscriptionKey, Subscription[SubscriptionKey]][])
+    .forEach(([key, value]) => {
+      if (value !== undefined) {
+        setValue(key, value, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+      }
+    });
+}, [prefillValues, setValue]);
+
 
   useEffect(() => {
     if (!cycleType || !cycleCount) return;
@@ -71,7 +89,7 @@ export default function MyForm({ onSubmit, submitting = false, defaultValues }: 
   };
 
   const inputClass =
-    "border border-input px-2 py-1 rounded w-full text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary";
+    "border border-input px-2 py-[7px] rounded w-full text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary";
 
   const secondClass =
     "border border-input px-2 py-2 rounded w-[40%] text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary ";
@@ -83,12 +101,12 @@ export default function MyForm({ onSubmit, submitting = false, defaultValues }: 
     "border border-input p-2 rounded w-full text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary";
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-      <div className="flex flex-row gap-2 w-full">
+    <form id="subscription-form" onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+      <div className="flex flex-row gap-2 w-full ">
         <div className="flex-1">
           <input
             {...register("name", { required: "Subscription name is required" })}
-            className={smallInputClass}
+            className={inputClass}
             placeholder="Subscription Name"
           />
           {errors.name && (
@@ -286,7 +304,7 @@ export default function MyForm({ onSubmit, submitting = false, defaultValues }: 
         />
       </label>
 
-      <button
+      {/* <button
         type="submit"
         disabled={submitting}
         className="
@@ -297,7 +315,7 @@ export default function MyForm({ onSubmit, submitting = false, defaultValues }: 
         "
       >
         {submitting ? "Adding Subscription..." : "Add Subscription"}
-      </button>
+      </button> */}
     </form>
   );
 }

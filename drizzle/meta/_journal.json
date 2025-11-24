@@ -8,6 +8,13 @@
       "when": 1763700713456,
       "tag": "0000_peaceful_moonstone",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763994021756,
+      "tag": "0001_aspiring_ikaris",
+      "breakpoints": true
     }
   ]
 }

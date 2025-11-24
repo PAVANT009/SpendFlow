@@ -1,7 +1,7 @@
 // AddSubscription.tsx
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import CompanySearch from "./company-search";
 import { 
   Sheet, 
@@ -14,9 +14,62 @@ import {
   SheetTrigger
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Subscription } from "@/types/Subscription";
+import { useRouter } from "next/navigation";
 
 export default function AddSubscription() {
   const [isOpen, setIsOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const [selected, setSelected] = useState<Subscription>();
+    const [submitting, setSubmitting] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
+
+  const handleFormSubmit = async (formData: Subscription) => {
+    console.log("Form data:", formData);  
+    try {
+      setSubmitting(true);
+  
+      const subscriptionData = {
+        ...formData,
+        logo_url: selected?.logo_url,
+        url: selected?.url || formData.url,
+      };
+      
+      console.log("Sending data:", subscriptionData);  
+  
+      const res = await fetch("/api/subscriptions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(subscriptionData),
+      });
+  
+      console.log("Response status:", res.status);  
+      const responseData = await res.json();
+      console.log("Response data:", responseData);
+  
+      if (!res.ok) {
+        throw new Error(responseData.error || "Failed to create subscription");
+      }
+  
+      setQuery("");
+      setSelected(undefined);
+      router.push("/subscriptions");
+      router.refresh();
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+      console.error("Error submitting subscription:", err);
+      alert(`Error: ${err.message}`); 
+      }
+      else {
+        console.log(err);
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex justify-end mb-9">
@@ -40,14 +93,17 @@ export default function AddSubscription() {
           <div className="flex flex-col h-full overflow-hidden">
 
             <div className="flex-grow overflow-y-auto p-6 pt-0">
-              <CompanySearch onSelect={(c) => console.log(c)} />
+              <CompanySearch handleSubmit={handleFormSubmit}  onSelect={(c) => console.log( "data coming from CompanySearch:" +  c)} />
             </div>
 
             <SheetFooter className="p-4 flex flex-row w-full justify-end border-t bg-background shrink-0">
               <SheetClose asChild>
                 <Button variant="outline">Cancel</Button>
               </SheetClose>
-              <Button>Add Subscription</Button>
+              {/* <Button onClick={() =>handleFormSubmit} >Add Subscription</Button> */}
+              <Button form="subscription-form" type="submit">
+              Add Subscription
+            </Button>
             </SheetFooter>
           </div>
         </SheetContent>

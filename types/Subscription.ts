@@ -18,6 +18,8 @@ export interface Subscription {
 
   url?: string | null;
 
+  domain? : string | null;
+
   notes?: string | null;
 
   amount: string;

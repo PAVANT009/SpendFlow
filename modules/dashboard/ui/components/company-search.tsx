@@ -5,35 +5,59 @@ import { Info } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import MyForm from "./MyForm";
-import { useRouter } from "next/navigation";
 
-export default function CompanySearch({ onSelect }: { onSelect?: (c: Subscription) => void }) {
+interface CompanySearchProps {
+    handleSubmit?: (data: Subscription) => void | Promise<void>;
+    onSelect?: (c: Subscription) => void
+}
+
+export default function CompanySearch({handleSubmit, onSelect }:CompanySearchProps)  {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Subscription[]>([]);
   const [selected, setSelected] = useState<Subscription>();
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   useEffect(() => {
+  const delay = setTimeout(async () => {
     if (!query) {
       setSuggestions([]);
+      setLoading(false);
       return;
     }
 
-    const delay = setTimeout(async () => {
-      setLoading(true);
+    setLoading(true);
 
-      const res = await fetch(`/api/company-search?q=${encodeURIComponent(query)}`);
-      const data = await res.json();
+    const res = await fetch(`/api/company-search?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    console.log(data);
+    setSuggestions(data);
+    setLoading(false);
+  }, 300);
 
-      setSuggestions(data);
-      setLoading(false);
-    }, 300);
+  return () => clearTimeout(delay);
+}, [query]);
 
-    return () => clearTimeout(delay);
-  }, [query]);
+
+  // useEffect(() => {
+  //   if (!query) {
+  //     setSuggestions([]);
+  //     return;
+  //   }
+
+  //   const delay = setTimeout(async () => {
+  //     setLoading(true);
+
+  //     const res = await fetch(`/api/company-search?q=${encodeURIComponent(query)}`);
+  //     const data = await res.json();
+
+  //     setSuggestions(data);
+  //     setLoading(false);
+  //   }, 300);
+
+  //   return () => clearTimeout(delay);
+  // }, [query]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -46,50 +70,9 @@ export default function CompanySearch({ onSelect }: { onSelect?: (c: Subscriptio
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-const handleFormSubmit = async (formData: Subscription) => {
-  console.log("Form data:", formData); // Check what's being submitted
-  
-  try {
-    setSubmitting(true);
-
-    const subscriptionData = {
-      ...formData,
-      logo_url: selected?.logo_url,
-      url: selected?.url || formData.url,
-    };
-    
-    console.log("Sending data:", subscriptionData); // Check merged data
-
-    const res = await fetch("/api/subscriptions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(subscriptionData),
-    });
-
-    console.log("Response status:", res.status); // Check response
-    const responseData = await res.json();
-    console.log("Response data:", responseData);
-
-    if (!res.ok) {
-      throw new Error(responseData.error || "Failed to create subscription");
-    }
-
-    setQuery("");
-    setSelected(undefined);
-    router.push("/subscriptions");
-    router.refresh();
-  } catch (error) {
-    console.error("Error submitting subscription:", error);
-    alert(`Error: ${error.message}`); // Show error to user
-  } finally {
-    setSubmitting(false);
-  }
-};
 
   return (
-    <div ref={containerRef} className="w-full flex flex-col gap-4">
+    <div  className="w-full flex flex-col gap-4">
       
       <div className="flex flex-col gap-2">
         <p className="text-2xl text-foreground font-semibold">Add New Subscription</p>
@@ -110,7 +93,7 @@ const handleFormSubmit = async (formData: Subscription) => {
             </p>
           </div>
 
-          <div className="relative w-full">
+          <div className="relative w-full" ref={containerRef}>
             <input
               type="text"
               placeholder="Search company..."
@@ -132,7 +115,7 @@ const handleFormSubmit = async (formData: Subscription) => {
               ">
                 {suggestions.map((s)  => (
                   <div
-                    key={s.url}
+                    key={s.id}
                     className="px-5 py-2.5 flex flex-row gap-3 items-center hover:bg-primary cursor-pointer hover:rounded-md"
                     onClick={() => {
                       setSelected(s);
@@ -152,12 +135,17 @@ const handleFormSubmit = async (formData: Subscription) => {
         </div>
 
         <MyForm 
-          onSubmit={handleFormSubmit}
+          onSubmit={handleSubmit}
           submitting={submitting}
-          defaultValues={selected ? {
-            name: selected.name,
-            url: selected.url,
-          } : undefined}
+          prefillValues={
+            selected
+              ? {
+                  name: selected.name,
+                  url: selected.domain,
+                  category: selected.category ?? "Cloud",
+                }
+              : undefined
+          }
         />
       </div>
 

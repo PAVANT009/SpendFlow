@@ -34,10 +34,17 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
+  } catch (err: unknown) {
+  if (err instanceof Error) {
     return NextResponse.json(
       { error: "Failed to create subscription", details: err.message },
       { status: 500 }
     );
+  }
+
+  return NextResponse.json(
+    { error: "Failed to create subscription", details: String(err) },
+    { status: 500 }
+  );
   }
 }
