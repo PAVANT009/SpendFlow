@@ -56,7 +56,7 @@ export default function AddSubscription() {
   
       setQuery("");
       setSelected(undefined);
-      router.push("/subscriptions");
+      // router.push("/subscriptions");
       router.refresh();
     } catch (err: unknown) {
       if (err instanceof Error) {

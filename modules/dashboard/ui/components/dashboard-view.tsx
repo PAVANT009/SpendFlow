@@ -1,5 +1,6 @@
 // app/(dashboard)/page.tsx
 import AddSubscription from './add-subscription';
+import SubscriptionTable from './subscriptions-table';
 import UsersList from './users-list';
 
 async function fetchUsers() {
@@ -22,7 +23,8 @@ export default async function DashboardPage() {
   return (
     <div className="p-6 bg-background">
       <AddSubscription />
-      <UsersList initialUsers={users} />
+      {/* <UsersList initialUsers={users} /> */}
+      <SubscriptionTable/>
 
     </div>
   );

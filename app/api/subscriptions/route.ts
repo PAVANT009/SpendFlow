@@ -48,3 +48,30 @@ export async function POST(req: Request) {
   );
   }
 }
+
+export async function GET(req: Request) {
+  try {
+    const session = await auth.api.getSession({headers: req.headers});
+
+    if(!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = session.user.id;
+
+    const data = await db.query.subscription.findMany()
+
+    return NextResponse.json(data);
+  } catch (err: unknown) {
+    if(err instanceof Error) {
+      return NextResponse.json(
+        {error: "Failed to get subscriptions", details: err.message },
+        {status: 500}
+      )
+    }
+    return NextResponse.json(
+        {error: "Failed to get subscriptions", details: String(err) },
+        {status: 500}
+    )
+  }
+}

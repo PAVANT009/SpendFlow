@@ -4,7 +4,7 @@ import { Subscription } from "@/types/Subscription";
 import { Info } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
-import MyForm from "./MyForm";
+import MyForm from "./my-form";
 
 interface CompanySearchProps {
     handleSubmit?: (data: Subscription) => void | Promise<void>;
