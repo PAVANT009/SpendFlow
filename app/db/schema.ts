@@ -92,6 +92,14 @@ export const subscription = pgTable("subscription", {
 });
 
 
+export const schema = {
+  user,
+  session,
+  account,
+  verification,
+  subscription
+}
+
 // import { pgTable, text, timestamp, boolean, numeric, integer, } from "drizzle-orm/pg-core";
 
 
