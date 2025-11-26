@@ -1,22 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/types/user";
 import { ArrowUpRight, CalendarClock, CreditCard, IndianRupee, TrendingUp } from "lucide-react";
 import Card from "./card";
 
 export default function UsersList({ initialUsers }: { initialUsers: User[] }) {
-  const [users, setUsers] = useState(initialUsers);
 
-  const loading = users.length === 0; // ✅ computed (no useEffect needed)
+  const [dashboardData, setDashboardData] = useState<null | {
+  activeSubscriptions: number;
+  monthlyTotal: number ;
+  topCategory: { category: string; monthly: number };
+  upcomingRenewalsCount: number;
+}>(null);
+
+useEffect(() => {
+  const fetchData = async () => {
+    const res = await fetch("/api/subscriptions/stats");
+    const data = await res.json();
+    setDashboardData(data);
+  };
+  fetchData();
+}, []);
+
+
 
   return (
-    <div className="flex flex-row gap-7 mx-7">
+    <div className="flex flex-row gap-7 mx-5 mb-6">
       <Card
         title="Monthly Spending"
         icon={<IndianRupee/>}
-        amount="$8438.8"
+        amount={String(dashboardData?.monthlyTotal)}
         mutedicon={<ArrowUpRight/>}
         percentage={5.2}
         muted = "from last month"
@@ -24,19 +39,19 @@ export default function UsersList({ initialUsers }: { initialUsers: User[] }) {
       <Card 
         title="Active Subscriptions"
         icon={<CreditCard/>}
-        amount="19"
+        amount={String(dashboardData?.activeSubscriptions)}
         muted="Average $10.65 each"
       />
       <Card 
         title="Top Category"
         icon={<TrendingUp/>}
-        amount="Entertainment"
+        amount={String(dashboardData?.topCategory["category"])}
         muted="$56.00/month"
       />
       <Card
         title="Next Renewal"
         icon={<CalendarClock/>}
-        amount="in 4 days"
+        amount={String(dashboardData?.upcomingRenewalsCount)}
         muted="Duolingo Plus - $6.99"
       />
       </div>
