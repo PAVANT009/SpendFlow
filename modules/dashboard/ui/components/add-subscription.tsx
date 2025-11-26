@@ -57,6 +57,7 @@ export default function AddSubscription() {
       setQuery("");
       setSelected(undefined);
       // router.push("/subscriptions");
+      setIsOpen(false);
       router.refresh();
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -72,7 +73,7 @@ export default function AddSubscription() {
   };
 
   return (
-    <div className="flex justify-end mb-9">
+    <div className="flex justify-end mb-4">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button variant="default" className="flex items-center gap-2">

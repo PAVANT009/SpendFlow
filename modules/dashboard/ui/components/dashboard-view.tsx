@@ -21,9 +21,9 @@ export default async function DashboardPage() {
   
 
   return (
-    <div className="p-6 bg-background">
+    <div className="px-6 pt-4 pb-5 bg-background">
       <AddSubscription />
-      {/* <UsersList initialUsers={users} /> */}
+      <UsersList initialUsers={users} />
       <SubscriptionTable/>
 
     </div>

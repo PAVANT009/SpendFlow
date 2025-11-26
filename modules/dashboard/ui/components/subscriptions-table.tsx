@@ -28,6 +28,7 @@
 //     </div>
 //   )
 // }
+
 "use client"
 
 import * as React from "react"
@@ -68,6 +69,7 @@ import {
 import { Subscription } from "@/types/Subscription"
 import { cn } from "@/lib/utils"
 import { formatToDDMMYYYY, getDateStatus } from "@/util/useDateDifference"
+import { Skeleton } from "@/components/ui/skeleton"
   // Entertainment: "border-blue-500 text-blue-600",
   // Productivity: "border-purple-500 text-purple-600",
   // "Health & Fitness": "border-pink-500 text-pink-600",
@@ -78,15 +80,15 @@ const categoryColors: Record<string,string> = {
   Learning: "bg-green-500/30 text-green-300 border-green-700",
   Entertainment: "bg-blue-500/30 text-blue-300 border-blue-700",
   "Health & Fitness": "bg-pink-500/30 text-pink-300 border-pink-700",
-  Development: "bg-orange-500/30 text-orange-300 border-green-700",
+  Development: "bg-orange-500/30 text-orange-300 border-orange-700",
   Cloud: "bg-yellow-500/30 text-yellow-300 border-yellow-700",
   Productivity: "bg-purple-500/30 text-purple-300 border-purple-700",
 };
 
 const dateColors: Record<string, string> = {
-  overdue: "bg-red-500",
-  thisweek: "bg-pink-500",
-  today: "bg-orange-500",
+  overdue: "bg-red-500/20 text-red-600",
+  thisweek: "bg-pink-500/20 text-pink-600",
+  today: "bg-orange-500/20 text-orange-600",
   scheduled: "bg-green-500/20 text-green-600",
 }
 
@@ -226,14 +228,15 @@ export const columns: ColumnDef<Subscription>[] = [
 
 export default function SubscriptionTable() {
     const[data,setData] = React.useState<Subscription[]>([]);
-
+    const [loading,setLoading] = React.useState(false);
       React.useEffect(() => {
         const  fetchData = async() => {
-
+           setLoading(true)
             const res = await fetch('/api/subscriptions');
             const data = await res.json();
             setData(data);
             console.log(data);
+            setLoading(false)
         }
         fetchData();
     },[])
@@ -256,12 +259,18 @@ export default function SubscriptionTable() {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    initialState:{
+      pagination: {
+      pageSize: 4,
+    },
+    },
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
     },
+
   })
 
   return (
@@ -323,7 +332,32 @@ export default function SubscriptionTable() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {
+            loading ? 
+            [...Array(5)].map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-5 text-black" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                  <TableCell>
+                    <div className="flex justify-center">
+                      <Skeleton className="bg-accent h-4 w-[100px]" />
+                    </div>
+                    </TableCell>
+                  <TableCell>
+                    <div className="flex justify-center">
+                      <Skeleton className="h-4 w-[80px]" />
+                    </div>
+                    </TableCell>
+                  <TableCell >
+                    <div className="flex justify-end">
+                      <Skeleton className="h-4 w-[40px] text-right" />
+                    </div>
+                    </TableCell>
+                </TableRow>
+              ))
+            : 
+            /////////////////// table.getRowModel().rows?.length ? 
+            (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -339,16 +373,18 @@ export default function SubscriptionTable() {
                   ))}
                 </TableRow>
               ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
+            ) 
+            // : (
+            //   <TableRow>
+            //     <TableCell
+            //       colSpan={columns.length}
+            //       className="h-24 text-center"
+            //     >
+            //       No results.
+            //     </TableCell>
+            //   </TableRow>
+            // )
+          }
           </TableBody>
         </Table>
       </div>

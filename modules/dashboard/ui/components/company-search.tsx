@@ -142,7 +142,7 @@ export default function CompanySearch({handleSubmit, onSelect }:CompanySearchPro
               ? {
                   name: selected.name,
                   url: selected.domain,
-                  category: selected.category ?? "Cloud",
+                  category: selected.category,
                 }
               : undefined
           }
