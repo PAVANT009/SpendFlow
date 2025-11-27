@@ -15,6 +15,13 @@
       "when": 1763994021756,
       "tag": "0001_aspiring_ikaris",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764255884764,
+      "tag": "0002_worried_imperial_guard",
+      "breakpoints": true
     }
   ]
 }

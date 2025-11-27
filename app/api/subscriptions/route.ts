@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       reminder: Boolean(body.reminder),
       createdAt: new Date(),
       updatedAt: new Date(),
+      logoUrl: body.logo_url
     });
 
     return NextResponse.json({ success: true });

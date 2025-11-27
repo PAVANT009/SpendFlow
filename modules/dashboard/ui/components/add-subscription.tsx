@@ -32,7 +32,6 @@ export default function AddSubscription() {
   
       const subscriptionData = {
         ...formData,
-        logo_url: selected?.logo_url,
         url: selected?.url || formData.url,
       };
       

@@ -143,6 +143,7 @@ export default function CompanySearch({handleSubmit, onSelect }:CompanySearchPro
                   name: selected.name,
                   url: selected.domain,
                   category: selected.category,
+                  logo_url: selected.logo_url
                 }
               : undefined
           }
