@@ -75,6 +75,8 @@ export const subscription = pgTable("subscription", {
   category: text("category").notNull(),
   description: text("description"),
   url: text("url"),
+  logoUrl: text("logo_url"),
+
 
   amount: numeric("amount").notNull(),
   currency: text("currency").notNull(),

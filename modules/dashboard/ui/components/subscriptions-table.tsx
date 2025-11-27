@@ -70,6 +70,7 @@ import { Subscription } from "@/types/Subscription"
 import { cn } from "@/lib/utils"
 import { formatToDDMMYYYY, getDateStatus } from "@/util/useDateDifference"
 import { Skeleton } from "@/components/ui/skeleton"
+import Image from "next/image"
   // Entertainment: "border-blue-500 text-blue-600",
   // Productivity: "border-purple-500 text-purple-600",
   // "Health & Fitness": "border-pink-500 text-pink-600",
@@ -136,7 +137,18 @@ export const columns: ColumnDef<Subscription>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+    cell: ({ row }) => (
+      <div className="flex flex-row gap-2">
+        <Image
+          width={3}
+          height={3}
+          src={row.original.logoUrl}
+          alt="logo"
+          className="w-8 h-8 rounded"
+        />
+        <div className="capitalize text-[20px] font-bold">{row.getValue("name")}</div>
+      </div>
+    ),
   },
   {
     accessorKey: "category",
@@ -234,6 +246,7 @@ export default function SubscriptionTable() {
            setLoading(true)
             const res = await fetch('/api/subscriptions');
             const data = await res.json();
+            
             setData(data);
             console.log(data);
             setLoading(false)

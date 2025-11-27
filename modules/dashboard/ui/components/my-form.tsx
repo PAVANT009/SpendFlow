@@ -40,6 +40,7 @@ export default function MyForm({ onSubmit, submitting = false, initialValues, pr
       reminder: initialValues?.reminder ?? false,
       cycleType: initialValues?.cycleType ?? "month",
       cycleCount: initialValues?.cycleCount ?? 1,
+      logo_url: initialValues?.logo_url ?? "",
       ...initialValues,
     }
   });
