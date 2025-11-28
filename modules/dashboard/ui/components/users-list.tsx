@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User } from "@/types/user";
-import { ArrowUpRight, CalendarClock, CreditCard, IndianRupee, TrendingUp } from "lucide-react";
+import { ArrowUpRight, CalendarClock, CreditCard, IndianRupee, TrendingUp, User } from "lucide-react";
 import Card from "./card";
+import { Subscription } from "@/types/Subscription";
 
-export default function UsersList({ initialUsers }: { initialUsers: User[] }) {
+export default function UsersStats({data,loading} :{data:Subscription[] ,loading: boolean}) {
 
   const [dashboardData, setDashboardData] = useState<null | {
   activeSubscriptions: number;
@@ -18,11 +18,11 @@ export default function UsersList({ initialUsers }: { initialUsers: User[] }) {
 useEffect(() => {
   const fetchData = async () => {
     const res = await fetch("/api/subscriptions/stats");
-    const data = await res.json();
-    setDashboardData(data);
+    const dataStats = await res.json();
+    setDashboardData(dataStats);
   };
   fetchData();
-}, []);
+}, [data]);
 
 
 
@@ -31,15 +31,15 @@ useEffect(() => {
       <Card
         title="Monthly Spending"
         icon={<IndianRupee/>}
-        amount={String(dashboardData?.monthlyTotal)}
-        mutedicon={<ArrowUpRight/>}
+        amount={loading || String(dashboardData?.monthlyTotal) == "undefined" ? <Skeleton className="h-6 w-24" /> : String(dashboardData?.monthlyTotal)}
+        muted={loading ? <Skeleton className="h-4 w-32" /> : "From last month"} 
         percentage={5.2}
-        muted = "from last month"
+        // muted = "from last month"
       />
       <Card 
         title="Active Subscriptions"
         icon={<CreditCard/>}
-        amount={String(dashboardData?.activeSubscriptions)}
+        amount={ loading ||  String(dashboardData?.activeSubscriptions) == "undefined" ? <Skeleton className="h-6 w-24" />:String(dashboardData?.activeSubscriptions) }
         muted="Average $10.65 each"
       />
       <Card 
@@ -71,20 +71,3 @@ useEffect(() => {
   );
 }
 
-
-function UsersSkeleton() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {[1, 2, 3].map((item) => (
-        <div key={item} className="bg-gray-100 p-4 rounded-lg shadow-sm">
-          <Skeleton className="w-16 h-16 rounded-full mx-auto mb-2" />
-          <div className="text-center space-y-2">
-            <Skeleton className="h-4 w-3/4 mx-auto" />
-            <Skeleton className="h-3 w-1/2 mx-auto" />
-            <Skeleton className="h-3 w-1/3 mx-auto" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}

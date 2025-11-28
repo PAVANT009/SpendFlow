@@ -1,31 +1,38 @@
 // app/(dashboard)/page.tsx
+"use client";
+
+import { Subscription } from '@/types/Subscription';
 import AddSubscription from './add-subscription';
 import SubscriptionTable from './subscriptions-table';
-import UsersList from './users-list';
+import { useEffect, useState, useCallback } from 'react';
+import UsersStats from './users-list';
 
-async function fetchUsers() {
-  
-  const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+export default function DashboardPage() {
+  const [data, setData] = useState<Subscription[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const res = await fetch(`${base}/api/users`, {
-    cache: "no-store",
-  });
+  const fetchSubscriptions = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/subscriptions");
+      const data = await res.json();
+      setData(data);
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  if (!res.ok) return [];
-
-  return res.json();
-}
-
-export default async function DashboardPage() {
-  const users = await fetchUsers(); 
-  
+  useEffect(() => {
+    fetchSubscriptions();
+  }, [fetchSubscriptions]);
 
   return (
     <div className="px-6 pt-4 pb-5 bg-background">
-      <AddSubscription />
-      <UsersList initialUsers={users} />
-      <SubscriptionTable/>
-
+      <AddSubscription onSubscriptionAdded={fetchSubscriptions} />
+      <UsersStats data={data} loading={loading}/>
+      <SubscriptionTable data={data} loading={loading} />
     </div>
   );
 }

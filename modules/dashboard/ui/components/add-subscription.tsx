@@ -17,13 +17,17 @@ import { Button } from "@/components/ui/button";
 import { Subscription } from "@/types/Subscription";
 import { useRouter } from "next/navigation";
 
-export default function AddSubscription() {
+interface AddSubscriptionProps {
+  onSubscriptionAdded: () => void;
+}
+
+
+export default function AddSubscription({ onSubscriptionAdded }: AddSubscriptionProps) {
   const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [selected, setSelected] = useState<Subscription>();
     const [submitting, setSubmitting] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const router = useRouter();
 
   const handleFormSubmit = async (formData: Subscription) => {
     console.log("Form data:", formData);  
@@ -57,7 +61,10 @@ export default function AddSubscription() {
       setSelected(undefined);
       // router.push("/subscriptions");
       setIsOpen(false);
-      router.refresh();
+      
+
+      onSubscriptionAdded();
+
     } catch (err: unknown) {
       if (err instanceof Error) {
       console.error("Error submitting subscription:", err);

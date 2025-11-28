@@ -7,7 +7,7 @@ import { PanelLeftIcon, PanelRightIcon, SearchIcon } from "lucide-react";
 import { ModeToggleBtn } from "@/components/theme-button";
 // import { DashboardCommand } from "./dashboard-command";
 
-export const DashboardNavbar = () => {
+export const PageNavbar = () => {
     const { state, toggleSidebar, isMobile} = useSidebar();
     const [commandOpen, setCommandOpen] = useState(false);
 
