@@ -6,6 +6,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/next";
 import { authClient } from "./lib/auth-clent";
 import { redirect } from "next/navigation";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { PageSidebar } from "@/modules/page/ui/components/page-sidebar";
+import { PageNavbar } from "@/modules/page/ui/components/page-navbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,7 +40,13 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+    <SidebarProvider >
+        <PageSidebar/>
+        <main className="flex flex-col h-screen w-screen bg-muted">
+        <PageNavbar/>
+        {children}
+        </main>
+    </SidebarProvider>
           </ThemeProvider>
         </NuqsAdapter>
       </body>

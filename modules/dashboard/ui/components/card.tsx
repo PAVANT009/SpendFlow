@@ -1,10 +1,10 @@
 import React from 'react'
 
-interface CardProps {
+export interface CardProps {
   title: string;
   icon: React.ReactNode;
-  amount: string;
-  muted: string;
+  amount: React.ReactNode;   
+  muted: React.ReactNode;    
   mutedicon?: React.ReactNode;
   percentage?: number;
 }

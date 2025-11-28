@@ -93,13 +93,30 @@ export const subscription = pgTable("subscription", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const budget = pgTable("budget", {
+  id: text("id").primaryKey(),
+
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  category: text("category").notNull(),
+
+  maxBudget: numeric("max_budget").notNull(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+
 
 export const schema = {
   user,
   session,
   account,
   verification,
-  subscription
+  subscription,
+  budget,
 }
 
 // import { pgTable, text, timestamp, boolean, numeric, integer, } from "drizzle-orm/pg-core";

@@ -140,9 +140,9 @@ export const columns: ColumnDef<Subscription>[] = [
     cell: ({ row }) => (
       <div className="flex flex-row gap-2">
         <Image
-          width={3}
-          height={3}
-          src={row.original.logoUrl}
+          width={1}
+          height={1}
+          src={row.original.logoUrl} //have to change it 
           alt="logo"
           className="w-8 h-8 rounded"
         />
@@ -238,21 +238,26 @@ export const columns: ColumnDef<Subscription>[] = [
   },
 ]
 
-export default function SubscriptionTable() {
-    const[data,setData] = React.useState<Subscription[]>([]);
-    const [loading,setLoading] = React.useState(false);
-      React.useEffect(() => {
-        const  fetchData = async() => {
-           setLoading(true)
-            const res = await fetch('/api/subscriptions');
-            const data = await res.json();
+interface SubscriptionTableProps {
+  data: Subscription[];
+  loading: boolean;
+}
+
+export default function SubscriptionTable({ data, loading }: SubscriptionTableProps) {
+    // const[data,setData] = React.useState<Subscription[]>([]);
+    // const [loading,setLoading] = React.useState(false);
+    //   React.useEffect(() => {
+    //     const  fetchData = async() => {
+    //        setLoading(true)
+    //         const res = await fetch('/api/subscriptions');
+    //         const data = await res.json();
             
-            setData(data);
-            console.log(data);
-            setLoading(false)
-        }
-        fetchData();
-    },[])
+    //         setData(data);
+    //         console.log(data);
+    //         setLoading(false)
+    //     }
+    //     fetchData();
+    // },[])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

@@ -53,7 +53,7 @@ import {  StarIcon, HomeIcon, ListIcon, BarChartIcon, BellIcon,LayoutDashboard, 
     },
 ]
 
-export const DashboardSidebar = () => {
+export const PageSidebar = () => {
     const pathname = usePathname();
     return (
         <Sidebar className="bg-sidebar">
