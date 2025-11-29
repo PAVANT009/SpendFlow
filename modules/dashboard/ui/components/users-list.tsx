@@ -21,6 +21,7 @@ useEffect(() => {
     const dataStats = await res.json();
     setDashboardData(dataStats);
   };
+  
   fetchData();
 }, [data]);
 

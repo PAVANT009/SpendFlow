@@ -11,7 +11,7 @@ import React from 'react'
 // }
 
 
-export default function CategorytCard() {
+export default function CategorytpCard() {
   return (
     <div className="w-[30%] h-24 bg-card text-card-foreground border border-border rounded-2xl py-5 px-5 shadow-sm">
       <div className="flex flex-row  items-center gap-3">

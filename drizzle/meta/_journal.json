@@ -22,6 +22,13 @@
       "when": 1764255884764,
       "tag": "0002_worried_imperial_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1764353083687,
+      "tag": "0003_perfect_vermin",
+      "breakpoints": true
     }
   ]
 }
