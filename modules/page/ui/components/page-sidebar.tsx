@@ -17,7 +17,7 @@ import {
     SidebarMenuItem,
     SidebarMenuButton
  } from "@/components/ui/sidebar";
-import {  StarIcon, HomeIcon, ListIcon, BarChartIcon, BellIcon,LayoutDashboard, Layers, ChartPie  } from "lucide-react";
+import {  StarIcon, BellIcon,LayoutDashboard, Layers, ChartPie  } from "lucide-react";
 
 // import { DashboardUserButton } from "./dashboard-user-button";
 // import { DashboardTrail } from "./dashboard-trail";
