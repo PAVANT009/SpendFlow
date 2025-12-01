@@ -29,6 +29,13 @@
       "when": 1764353083687,
       "tag": "0003_perfect_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1764570930070,
+      "tag": "0004_fantastic_vermin",
+      "breakpoints": true
     }
   ]
 }

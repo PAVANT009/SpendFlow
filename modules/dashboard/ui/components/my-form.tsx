@@ -192,7 +192,7 @@ useEffect(() => {
             <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
           )}
         </div>
-
+        <div className="flex-1 ml-auto ">
         <Controller
           control={control}
           name="currency"
@@ -201,6 +201,10 @@ useEffect(() => {
             <CurrencySelect value={field.value} onChange={field.onChange} />
           )}
         />
+        {errors.currency && (
+          <p className="text-red-500 text-xs mt-1">{errors.currency.message}</p>
+        )}
+          </div>
       </div>
 
       <div className="flex justify-between gap-1">
