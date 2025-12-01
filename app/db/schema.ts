@@ -26,10 +26,14 @@ export const session = pgTable("session", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
+
 
 
 export const account = pgTable("account", {
