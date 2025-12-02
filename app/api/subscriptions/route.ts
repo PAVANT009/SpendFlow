@@ -2,6 +2,7 @@ import { auth } from "@/app/lib/auth";
 import { db } from "@/app/db";
 import { subscription } from "@/app/db/schema";
 import { NextResponse } from "next/server";
+import { eq } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
@@ -60,7 +61,7 @@ export async function GET(req: Request) {
 
     const userId = session.user.id;
 
-    const data = await db.query.subscription.findMany()
+    const data = await db.query.subscription.findMany( {where: eq(subscription.userId, userId)})
 
     return NextResponse.json(data);
   } catch (err: unknown) {
