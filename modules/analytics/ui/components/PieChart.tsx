@@ -28,6 +28,24 @@ const chartData = [
   { browser: "other", visitors: 90, fill: "var(--color-other)" },
 ]
 
+// interface ChartPieDonutProps {
+//   category: string;
+//   subscriptionCount: number;
+//   fill: string;
+// }
+
+export interface PieChartData {
+  category: string;
+  subscriptionCount: number;
+  fill: string;
+  [key: string]: string | number; 
+}
+
+interface ChartPieDonutProps {
+  chartData: PieChartData[];
+}
+
+
 const chartConfig = {
   visitors: {
     label: "Visitors",
@@ -54,14 +72,14 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function ChartPieDonut() {
+export function ChartPieDonut({chartData}: {chartData:PieChartData[]}) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Pie Chart - Donut</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent className="flex-2 pb-0 ">
+      <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
           className="mx-auto aspect-square max-h-[250px]"
@@ -73,8 +91,8 @@ export function ChartPieDonut() {
             />
             <Pie
               data={chartData}
-              dataKey="visitors"
-              nameKey="browser"
+              dataKey="subscriptionCount"
+              nameKey="category"
               innerRadius={60}
             />
           </PieChart>
