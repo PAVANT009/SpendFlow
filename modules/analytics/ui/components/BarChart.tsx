@@ -2,7 +2,6 @@
 
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-
 import {
   Card,
   CardContent,
@@ -19,39 +18,25 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 
-export const description = "A stacked bar chart with a legend"
-
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-]
+export const description = "A stacked bar chart with subscription categories"
 
 interface BarData {
-  category: string,
-  year: number,
-  month: number,
+  category: string
+  year: number
+  month: number
   count: number
 }
 
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "var(--chart-1)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
-  },
-} satisfies ChartConfig
+type MonthData = {
+  month: string;
+  [category: string]: string | number; 
+};
 
 export function ChartBarStacked() {
-  const [barData,setBardata] = useState<BarData[]>([]);
+  const [barData, setBardata] = useState<BarData[]>([]);
+
   useEffect(() => {
     const fetchData = async() => {
       const res = await fetch("api/subscriptions/category-by-month");
@@ -59,55 +44,98 @@ export function ChartBarStacked() {
       setBardata(data);
     }
     fetchData();
-  },[]) 
-  console.log(barData);
+  }, [])
+
+  const { transformedData, dynamicChartConfig } = useMemo(() => {
+    if (barData.length === 0) {
+      return { transformedData: [], dynamicChartConfig: {} };
+    }
+
+    // Transform data
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const dataByMonth: Record<string, MonthData> = {};
+    const allCategories = new Set<string>();
+
+    barData.forEach(item => {
+      const monthKey = `${monthNames[item.month - 1]} ${item.year}`;
+      if (!dataByMonth[monthKey]) {
+        dataByMonth[monthKey] = { month: monthKey };
+      }
+      dataByMonth[monthKey][item.category] = item.count;
+      allCategories.add(item.category);
+    });
+
+    console.log("barData",barData);
+    console.log("dataByMonth",dataByMonth);
+    const transformed = Object.values(dataByMonth);
+    console.log("transformedData",transformed)
+    // Create dynamic chart config
+      const colors = [
+        "#a855f7", 
+        "#22c55e", 
+        "#3b82f6", 
+        "#eab308", 
+        "#f97316", 
+        "#ec4899", 
+      ]
+
+    const config: ChartConfig = {};
+    Array.from(allCategories).forEach((category, index) => {
+      config[category] = {
+        label: category,
+        color: colors[index % colors.length],
+      };
+    });
+    console.log("congif",config);
+    console.log("allCategories",allCategories);
+    return { transformedData: transformed, dynamicChartConfig: config };
+  }, [barData]);
+
   return (
-    <Card>
+    <Card className="w-[80%]">
       <CardHeader>
-        <CardTitle>Bar Chart - Stacked + Legend</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Subscription Categories by Month</CardTitle>
+        <CardDescription>Showing subscription distribution across categories</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
+        <ChartContainer config={dynamicChartConfig}>
+          <BarChart accessibilityLayer data={transformedData}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="month"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <ChartLegend content={<ChartLegendContent payload={"no one "} />} />
-            <Bar
-              dataKey="desktop"
-              stackId="a"
-              fill="var(--color-desktop)"
-              radius={[0, 0, 4, 4]}
-            />
-            <Bar
-              dataKey="mobile"
-              stackId="a"
-              fill="var(--color-mobile)"
-              radius={[0, 0, 0, 0]}
-            />
-            {/* <Bar
-              dataKey="mobile"
-              stackId="a"
-              fill="#a855f7"
-              radius={[4, 4, 0, 0]}
-            /> */}
+            <ChartLegend content={<ChartLegendContent payload={"no none"}/>} />
+            {Object.keys(dynamicChartConfig).map((category) => {
+              console.log(category, Object.keys(dynamicChartConfig))
+              return(
+                <Bar
+                key={category}
+                dataKey={category}
+                stackId="a"
+                fill={dynamicChartConfig[category].color}
+                radius={  [0, 0, 0, 0]}
+                />
+              )
+            }
+            )}
           </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
-        </div>
+        {transformedData.length > 0 && (
+          <>
+            <div className="flex items-center gap-2 font-medium leading-none">
+              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            </div>
+            <div className="leading-none text-muted-foreground">
+              Showing subscription categories throughout 2025
+            </div>
+          </>
+        )}
       </CardFooter>
     </Card>
   )
