@@ -30,7 +30,6 @@ export default function AddSubscription({ onSubscriptionAdded }: AddSubscription
     const containerRef = useRef<HTMLDivElement>(null);
 
   const handleFormSubmit = async (formData: Subscription) => {
-    console.log("Form data:", formData);  
     try {
       setSubmitting(true);
   
@@ -39,7 +38,6 @@ export default function AddSubscription({ onSubscriptionAdded }: AddSubscription
         url: selected?.url || formData.url,
       };
       
-      console.log("Sending data:", subscriptionData);  
   
       const res = await fetch("/api/subscriptions", {
         method: "POST",
@@ -49,9 +47,7 @@ export default function AddSubscription({ onSubscriptionAdded }: AddSubscription
         body: JSON.stringify(subscriptionData),
       });
   
-      console.log("Response status:", res.status);  
       const responseData = await res.json();
-      console.log("Response data:", responseData);
   
       if (!res.ok) {
         throw new Error(responseData.error || "Failed to create subscription");

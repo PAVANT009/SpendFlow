@@ -65,11 +65,8 @@ export function ChartBarStacked() {
       allCategories.add(item.category);
     });
 
-    console.log("barData",barData);
-    console.log("dataByMonth",dataByMonth);
     const transformed = Object.values(dataByMonth);
-    console.log("transformedData",transformed)
-    // Create dynamic chart config
+
       const colors = [
         "#a855f7", 
         "#22c55e", 
@@ -86,18 +83,16 @@ export function ChartBarStacked() {
         color: colors[index % colors.length],
       };
     });
-    console.log("congif",config);
-    console.log("allCategories",allCategories);
     return { transformedData: transformed, dynamicChartConfig: config };
   }, [barData]);
 
   return (
-    <Card className="w-[80%]">
+    <Card className="w-[50%]">
       <CardHeader>
         <CardTitle>Subscription Categories by Month</CardTitle>
         <CardDescription>Showing subscription distribution across categories</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent >
         <ChartContainer config={dynamicChartConfig}>
           <BarChart accessibilityLayer data={transformedData}>
             <CartesianGrid vertical={false} />
@@ -108,11 +103,11 @@ export function ChartBarStacked() {
               axisLine={false}
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <ChartLegend content={<ChartLegendContent payload={"no none"}/>} />
+            <ChartLegend content={ <ChartLegendContent payload={[]}/>} />
             {Object.keys(dynamicChartConfig).map((category) => {
-              console.log(category, Object.keys(dynamicChartConfig))
               return(
                 <Bar
+                barSize={20}
                 key={category}
                 dataKey={category}
                 stackId="a"

@@ -27,6 +27,6 @@ export async function GET(req: Request) {
 
     return NextResponse.json(results.rows);
   } catch (err) {
-    return NextResponse.json({ error: "Failed to load analytics" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to load analytics", }, { status: 500 });
   }
 }
