@@ -250,6 +250,13 @@ function ChartTooltipContent({
   )
 }
 
+interface ChartLegendContentProps extends Partial<RechartsPrimitive.LegendProps> {
+  payload?: RechartsPrimitive.LegendPayload[];
+  hideIcon?: boolean;
+  nameKey?: string;
+  className?: string;
+}
+
 const ChartLegend = RechartsPrimitive.Legend
 
 function ChartLegendContent({
@@ -258,56 +265,43 @@ function ChartLegendContent({
   payload,
   verticalAlign = "bottom",
   nameKey,
-}: React.ComponentProps<"div"> &
-  Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
-    hideIcon?: boolean
-    nameKey?: string
-  }) {
+}:ChartLegendContentProps) {
   const { config } = useChart()
 
   if (!payload?.length) {
     return null
   }
+  const rows = [
+  payload.slice(0, Math.ceil(payload.length / 2)),
+  payload.slice(Math.ceil(payload.length / 2))
+];
 
-  return (
-    <div
-      className={cn(
-        "flex items-center justify-center gap-4",
-        verticalAlign === "top" ? "pb-3" : "pt-3",
-        className
-      )}
-    >
-      {payload
-        .filter((item) => item.type !== "none")
-        .map((item) => {
+return (
+  <div className="flex flex-col gap-2">
+    {rows.map((row, i) => (
+      <div key={i} className="flex justify-center gap-4 flex-wrap">
+        {row.map((item) => {
           const key = `${nameKey || item.dataKey || "value"}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
 
           return (
-            <div
-              key={item.value}
-              className={cn(
-                "[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3"
-              )}
-            >
+            <div key={item.value} className="flex items-center gap-1.5">
               {itemConfig?.icon && !hideIcon ? (
                 <itemConfig.icon />
               ) : (
                 <div
                   className="h-2 w-2 shrink-0 rounded-[2px]"
-                  style={{
-                    backgroundColor: item.color,
-                  }}
+                  style={{ backgroundColor: item.color }}
                 />
               )}
-              <p className="pr-1">
-              {itemConfig?.label }
-              </p>
+              <p className="pr-1">{itemConfig?.label}</p>
             </div>
           )
         })}
-    </div>
-  )
+      </div>
+    ))}
+  </div>
+)
 }
 
 // Helper to extract item config from a payload.

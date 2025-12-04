@@ -74,12 +74,12 @@ const chartConfig = {
 
 export function ChartPieDonut({chartData}: {chartData:PieChartData[]}) {
   return (
-    <Card className="flex flex-col">
+    <Card className="h-[400px]">
       <CardHeader className="items-center pb-0">
         <CardTitle>Pie Chart - Donut</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
+      <CardContent className="flex-1 pb-0 ">
         <ChartContainer
           config={chartConfig}
           className="mx-auto aspect-square max-h-[250px]"

@@ -1,7 +1,7 @@
 "use client"
 
 import { TrendingUp } from "lucide-react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
   Card,
   CardContent,
@@ -18,6 +18,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { useEffect, useMemo, useState } from "react"
+import YearMonthToggle, { RangeOption } from "@/modules/analytics/ui/components/YearMonthToggle";
+
 
 interface BarData {
   category: string
@@ -31,74 +33,118 @@ type MonthChartRow = {
   total: number
 }
 
-const chartConfig = {
-  total: {
-    label: "Total",
-    color: "var(--chart-1)",
-  },
-} satisfies ChartConfig
+  const chartConfig = {
+    total: {
+      label: "Total Spending"
+    }
+  };
+
+
+function toMonthly(amount: number, cycleType: string, cycleCount: number) {
+  if (cycleCount <= 0) return amount;  
+
+  switch (cycleType.toLowerCase()) {
+    case "year":
+      return amount / 12;
+
+    case "month":
+      return amount / cycleCount;  
+
+    case "week":
+      return (amount * 52) / 12; 
+
+    case "day":
+      return (amount * 365) / 12;  
+
+    default:
+      return amount;  
+  }
+}
+
+
 
 export function ChartAreaDefault() {
-  const [barData, setBarData] = useState<BarData[]>([])
+const [chartData, setChartData] = useState<{ month: string; total: number }[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch("api/subscriptions/category-by-month")
-      const data = await res.json()
-      setBarData(data)
-    }
-    fetchData()
-  }, [])
 
-const chartData = useMemo(() => {
-  if (!barData.length) return []
+useEffect(() => {
+  const fetchData = async () => {
+    const res = await fetch("/api/subscriptions");
+    const subs = await res.json();
 
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-  const grouped: Record<string, MonthChartRow> = {}
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const grouped: Record<string, number> = {};
 
-  barData.forEach((item) => {
-    const monthKey = `${monthNames[item.month - 1]} ${item.year}`
-    if (!grouped[monthKey]) {
-      grouped[monthKey] = { month: monthKey, total: 0 }
-    }
-    grouped[monthKey].total += item.count
-  })
+    subs.forEach((sub: any) => {
+      const start = new Date(sub.startBilling);
+      const monthKey = `${monthNames[start.getMonth()]} ${start.getFullYear()}`;
+      const monthlyValue = toMonthly(Number(sub.amount), sub.cycleType, sub.cycleCount);
 
-  return Object.values(grouped)
-}, [barData])
+      if (!Number.isFinite(monthlyValue) || monthlyValue < 0) return;
+
+      grouped[monthKey] = (grouped[monthKey] ?? 0) + monthlyValue;
+    });
+
+    const formatted = Object.entries(grouped).map(([month, total]) => ({
+      month,
+      total: Number((total as number).toFixed(2))
+    }));
+
+    formatted.sort((a, b) => {
+      const [aMonth, aYear] = a.month.split(" ");
+      const [bMonth, bYear] = b.month.split(" ");
+
+      const dateA = new Date(Number(aYear), monthNames.indexOf(aMonth), 1);
+      const dateB = new Date(Number(bYear), monthNames.indexOf(bMonth), 1);
+
+      return dateA.getTime() - dateB.getTime();
+    });
+
+    setChartData(formatted);
+  };
+
+  fetchData();
+}, []);
+
+
+console.log(chartData)
 
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Spending Activity</CardTitle>
-        <CardDescription>Showing total expense count by month</CardDescription>
+      <CardHeader className="flex flex-row justify-between">
+        <div>
+          <CardTitle className="mb-1">Spending Activity</CardTitle>
+          <CardDescription>Showing total expense count by month</CardDescription>
+        </div>
+        <div >
+          {/* <YearMonthToggle value={selected} onChange={setSelected} /> */}
+        </div>
       </CardHeader>
 
-      <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <AreaChart
-            accessibilityLayer
-            data={chartData}
-            margin={{ left: 12, right: 12 }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-            />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
-            <Area
-              dataKey="total"
-              type="natural"
-              fill="var(--color-total)"
-              fillOpacity={0.4}
-              stroke="var(--color-total)"
-            />
-          </AreaChart>
-        </ChartContainer>
+      <CardContent >
+
+      <ChartContainer config={chartConfig} className="h-[350px] w-full">
+            <AreaChart accessibilityLayer data={chartData} margin={{ left: 25, right: 12 }}>
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                interval={0}
+              />
+              <YAxis allowDecimals={false} />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
+              <Area
+                dataKey="total"
+                type="monotone"
+                fill="#60a5fa"
+                fillOpacity={0.6}
+                stroke="#1e40af"
+                strokeWidth="3px"
+              />
+            </AreaChart>
+          </ChartContainer>
       </CardContent>
 
       <CardFooter>

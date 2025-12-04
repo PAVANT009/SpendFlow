@@ -25,7 +25,6 @@ export function CategoryActions({categoryData} : {categoryData:Budget}) {
     });
 
     const data = await res.json();
-    console.log(data);
 
     if (res.ok) {
         console.log(data.message);

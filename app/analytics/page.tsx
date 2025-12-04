@@ -3,7 +3,6 @@
 import { ChartAreaDefault } from "@/modules/analytics/ui/components/AreaChart";
 import { ChartBarStacked } from "@/modules/analytics/ui/components/BarChart";
 import { ChartPieDonut } from "@/modules/analytics/ui/components/PieChart";
-import YearMonthToggle, { RangeOption } from "@/modules/analytics/ui/components/YearMonthToggle";
 import React, { useEffect, useState } from "react";
 
 export const description = "A donut chart"
@@ -60,16 +59,13 @@ export default function Page() {
           subscriptionCount: item.totalMonthly ?? 0,    
           fill: colors[index] ?? "#ec4899",                
         }));
-        console.log(analyticData);
-  const [selected, setSelected] = useState<RangeOption>("month");
 
   return (
-    <div>
-      <YearMonthToggle value={selected} onChange={setSelected} />
+    <div className="px-7 pt-7  bg-background h-[1300px]">
       <div >
         <ChartAreaDefault/>
       </div>
-      <div className="flex flex-row mt-4 gap-10 px-5">
+      <div className="flex flex-row mt-4 justify-between">
         <ChartPieDonut chartData = {chartData}/>
         <ChartBarStacked/>
       </div>
