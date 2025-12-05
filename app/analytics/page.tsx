@@ -1,5 +1,6 @@
 "use client";
 
+import AlertSection from "@/modules/analytics/ui/components/AlertSection";
 import { ChartAreaDefault } from "@/modules/analytics/ui/components/AreaChart";
 import { ChartBarStacked } from "@/modules/analytics/ui/components/BarChart";
 import { ChartPieDonut } from "@/modules/analytics/ui/components/PieChart";
@@ -69,6 +70,7 @@ export default function Page() {
         <ChartPieDonut chartData = {chartData}/>
         <ChartBarStacked/>
       </div>
+      <AlertSection/>
     </div>
   );
 }

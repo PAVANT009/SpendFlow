@@ -72,40 +72,46 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function ChartPieDonut({chartData}: {chartData:PieChartData[]}) {
+export function ChartPieDonut({ chartData }: { chartData: PieChartData[] }) {
+  const chartConfig = Object.fromEntries(
+    chartData.map((c) => [
+      c.category,
+      { label: c.category, color: c.fill }
+    ])
+  );
+
+  const total = chartData.reduce((sum, c) => sum + c.subscriptionCount, 0);
+  console.log(chartConfig,chartData)
+
   return (
     <Card className="h-[400px]">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Donut</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Category Breakdown</CardTitle>
+        <CardDescription>Monthly spending by category</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0 ">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="subscriptionCount"
-              nameKey="category"
-              innerRadius={60}
-            />
-          </PieChart>
-        </ChartContainer>
-      </CardContent>
+<CardContent className="flex justify-center items-center">
+  <ChartContainer
+    config={chartConfig}
+    className="mx-auto h-[250px] w-[250px]"
+  >
+    <PieChart>
+      <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+      <Pie
+        data={chartData}
+        dataKey="subscriptionCount"
+        nameKey="category"
+        innerRadius={60}
+      />
+    </PieChart>
+  </ChartContainer>
+</CardContent>
+
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        <div className="flex items-center gap-2 font-medium">
+          Total: ${total.toFixed(2)} / year
         </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
-        </div>
+        <div className="text-muted-foreground">Across {chartData.length} categories</div>
       </CardFooter>
     </Card>
-  )
+  );
 }

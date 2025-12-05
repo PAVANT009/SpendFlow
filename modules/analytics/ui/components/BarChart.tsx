@@ -29,13 +29,23 @@ interface BarData {
   count: number
 }
 
+interface HighCat {
+  category: string;
+  amount: number;
+}
+
+interface BarResponse {
+  data: BarData[];
+  highCat: HighCat ;
+}
+
 type MonthData = {
   month: string;
   [category: string]: string | number; 
 };
 
 export function ChartBarStacked() {
-  const [barData, setBardata] = useState<BarData[]>([]);
+  const [barData, setBardata] = useState<BarResponse | null>(null);
 
   useEffect(() => {
     const fetchData = async() => {
@@ -47,7 +57,7 @@ export function ChartBarStacked() {
   }, [])
 
   const { transformedData, dynamicChartConfig } = useMemo(() => {
-    if (barData.length === 0) {
+    if (barData?.data.length === 0) {
       return { transformedData: [], dynamicChartConfig: {} };
     }
 
@@ -56,7 +66,7 @@ export function ChartBarStacked() {
     const dataByMonth: Record<string, MonthData> = {};
     const allCategories = new Set<string>();
 
-    barData.forEach(item => {
+    barData?.data.forEach(item => {
       const monthKey = `${monthNames[item.month - 1]} ${item.year}`;
       if (!dataByMonth[monthKey]) {
         dataByMonth[monthKey] = { month: monthKey };
@@ -85,6 +95,8 @@ export function ChartBarStacked() {
     });
     return { transformedData: transformed, dynamicChartConfig: config };
   }, [barData]);
+
+  console.log(transformedData);
 
   return (
     <Card className="w-[50%]">
@@ -124,10 +136,10 @@ export function ChartBarStacked() {
         {transformedData.length > 0 && (
           <>
             <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+              Most expensive: {barData?.highCat.category}
             </div>
             <div className="leading-none text-muted-foreground">
-              Showing subscription categories throughout 2025
+              ${barData?.highCat.amount}/month
             </div>
           </>
         )}
