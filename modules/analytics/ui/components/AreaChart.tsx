@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
+import { TrendingDown, TrendingUp } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
   Card,
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/chart"
 import { useEffect, useMemo, useState } from "react"
 import YearMonthToggle, { RangeOption } from "@/modules/analytics/ui/components/YearMonthToggle";
+import { Subscription } from "@/types/Subscription"
 
 
 interface BarData {
@@ -75,7 +76,7 @@ useEffect(() => {
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const grouped: Record<string, number> = {};
 
-    subs.forEach((sub: any) => {
+    subs.forEach((sub: Subscription) => {
       const start = new Date(sub.startBilling);
       const monthKey = `${monthNames[start.getMonth()]} ${start.getFullYear()}`;
       const monthlyValue = toMonthly(Number(sub.amount), sub.cycleType, sub.cycleCount);
@@ -107,7 +108,11 @@ useEffect(() => {
 }, []);
 
 
-console.log(chartData)
+const trend = (
+              (
+                (chartData[chartData.length - 1]?.total - chartData[chartData.length - 2]?.total) / 
+                chartData[chartData.length - 2]?.total ) * 100
+                  ).toFixed(0) 
 
 
   return (
@@ -148,14 +153,40 @@ console.log(chartData)
       </CardContent>
 
       <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 leading-none font-medium">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="text-muted-foreground">Recent months</div>
-          </div>
+<div className="flex w-full items-start gap-2 text-sm">
+  <div className="grid gap-2">
+    <div className="flex items-center gap-2 leading-none font-medium">
+    {parseInt(trend) > 0 ? (
+      <div className="flex flex-row gap-1 items-center">
+        <div className="flex flex-row gap-1 items-center">
+          <span>Trending</span>
+          <span className={`${parseInt(trend) > 0 ? "text-green-600" : "text-red-600"}`}>
+            {Math.abs(parseInt(trend))}%
+          </span>
+          <span>up</span>
         </div>
+        <span>this month</span>
+        <TrendingUp className="h-4 w-4" />
+      </div>
+    ) : (
+      <div className="flex flex-row gap-1 items-center">
+        <div className="flex flex-row gap-1 items-center">
+          <span>Trending</span>
+          <span className={`${parseInt(trend) > 0 ? "text-green-600" : "text-red-600"}`}>
+            {Math.abs(parseInt(trend))}%
+          </span>
+          <span>down</span>
+        </div>
+        <span>this month</span>
+        <TrendingDown className="h-4 w-4" />
+      </div>
+    )}
+
+    </div>
+    <div className="text-muted-foreground">Last Year</div>
+  </div>
+  </div>
+
       </CardFooter>
     </Card>
   )

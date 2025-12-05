@@ -3,6 +3,11 @@ import { NextResponse } from "next/server";
 import { auth } from "@/app/lib/auth";
 import { db } from "@/app/db";
 
+interface HighCat {
+  category: string;
+  amount: number;
+}
+
 export async function GET(req: Request) {
   try {
     const session = await auth.api.getSession({ headers: req.headers });
@@ -12,6 +17,20 @@ export async function GET(req: Request) {
     }
 
     const userId = session.user.id;
+
+    const subs = await db.query.subscription.findMany({
+      where: (fields, {eq}) => eq(fields.userId,userId)
+    })
+
+    let highesht = 0;
+    let highCat:HighCat | null = null; ;
+
+    for (const s of subs) {
+      if(Number(s.amount) > highesht  ) {
+        highesht = Number(s.amount);
+        highCat = {category: s.category, amount: highesht}
+      }
+    }
 
     const results = await db.execute(sql`
       SELECT 
@@ -25,7 +44,7 @@ export async function GET(req: Request) {
       ORDER BY year, month;
     `);
 
-    return NextResponse.json(results.rows);
+    return NextResponse.json({ data: results.rows, highCat });
   } catch (err) {
     return NextResponse.json({ error: "Failed to load analytics", }, { status: 500 });
   }
