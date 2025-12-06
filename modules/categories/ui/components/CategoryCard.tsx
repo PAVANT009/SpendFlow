@@ -54,9 +54,9 @@ export default function CategoryCard({
             {loading ? <Skeleton className="h-4 w-28" /> : categoryData.category}
           </h1>
 
-          <p className="text-muted-foreground">
+          <div className="text-muted-foreground">
             {loading ? <Skeleton className="h-4 w-20 mt-2" /> : `${data?.subscriptionCount} Subscriptions`}
-          </p>
+          </div>
         </div>
 
         <div className="ml-auto">

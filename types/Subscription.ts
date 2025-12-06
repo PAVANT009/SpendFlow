@@ -33,6 +33,8 @@ export interface Subscription {
 
   reminder: boolean;
 
+  state:boolean;
+
   createdAt: Date;
   updatedAt: Date;
 }

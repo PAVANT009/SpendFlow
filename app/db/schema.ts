@@ -81,7 +81,6 @@ export const subscription = pgTable("subscription", {
   url: text("url"),
   logoUrl: text("logo_url"),
 
-
   amount: numeric("amount").notNull(),
   currency: text("currency").notNull(),
 
@@ -93,9 +92,12 @@ export const subscription = pgTable("subscription", {
 
   reminder: boolean("reminder").default(false).notNull(),
 
+  state: boolean("state").default(true).notNull(),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
 
 export const budget = pgTable("budget", {
   id: text("id").primaryKey(),

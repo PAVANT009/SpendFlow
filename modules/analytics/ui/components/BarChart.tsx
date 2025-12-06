@@ -99,7 +99,7 @@ export function ChartBarStacked() {
   console.log(transformedData);
 
   return (
-    <Card className="w-[50%]">
+    <Card className="w-[50%] border border-border">
       <CardHeader>
         <CardTitle>Subscription Categories by Month</CardTitle>
         <CardDescription>Showing subscription distribution across categories</CardDescription>

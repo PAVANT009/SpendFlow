@@ -84,12 +84,12 @@ export function ChartPieDonut({ chartData }: { chartData: PieChartData[] }) {
   console.log(chartConfig,chartData)
 
   return (
-    <Card className="h-[400px]">
+    <Card className="h-[400px] border border-border">
       <CardHeader className="items-center pb-0">
         <CardTitle>Category Breakdown</CardTitle>
         <CardDescription>Monthly spending by category</CardDescription>
       </CardHeader>
-<CardContent className="flex justify-center items-center">
+<CardContent className="flex justify-center items-center ">
   <ChartContainer
     config={chartConfig}
     className="mx-auto h-[250px] w-[250px]"

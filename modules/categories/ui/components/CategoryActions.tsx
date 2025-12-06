@@ -59,7 +59,7 @@ export function CategoryActions({categoryData} : {categoryData:Budget}) {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent 
                   side="top" 
-                  className="w-[30%] max-w-[30%] border border-none bg-card  rounded-md mx-auto pt-1  h-[50vh] max-h-[50vh] mt-24"
+                  className="w-[30%] max-w-[30%] border-1 border-border bg-card  rounded-2xl mx-auto pt-1  h-[50vh] max-h-[50vh] mt-24"
                 >
                   <SheetHeader >
                     <SheetTitle className="text-2xl text-foreground">Edit Subscription</SheetTitle>
