@@ -36,6 +36,13 @@
       "when": 1764570930070,
       "tag": "0004_fantastic_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1765035926298,
+      "tag": "0005_fat_micromax",
+      "breakpoints": true
     }
   ]
 }

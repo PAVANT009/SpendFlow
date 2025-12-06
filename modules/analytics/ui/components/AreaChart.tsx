@@ -117,7 +117,7 @@ const trend = (
 
   return (
     <Card>
-      <CardHeader className="flex flex-row justify-between">
+      <CardHeader className="flex flex-row justify-between ">
         <div>
           <CardTitle className="mb-1">Spending Activity</CardTitle>
           <CardDescription>Showing total expense count by month</CardDescription>
