@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1763700713456,
-      "tag": "0000_peaceful_moonstone",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1763994021756,
-      "tag": "0001_aspiring_ikaris",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1764255884764,
-      "tag": "0002_worried_imperial_guard",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1764353083687,
-      "tag": "0003_perfect_vermin",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1764570930070,
-      "tag": "0004_fantastic_vermin",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1765035926298,
-      "tag": "0005_fat_micromax",
+      "when": 1765128865001,
+      "tag": "0000_strange_red_shift",
       "breakpoints": true
     }
   ]

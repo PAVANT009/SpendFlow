@@ -1,1 +1,0 @@
-ALTER TABLE "subscription" ADD COLUMN "logo_url" text;

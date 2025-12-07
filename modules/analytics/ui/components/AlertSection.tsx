@@ -77,7 +77,6 @@ export default function AlertSection() {
 
         console.log("AI Insight:", data);
 
-        // FIX: pick **string** field — adjust to your API response
         setInsight(data.result || data.suggestion || "No insight found");
       
     };

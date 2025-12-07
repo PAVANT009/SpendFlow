@@ -15,26 +15,55 @@ export default function CategoryCard({
   categoryData,
   color,
   onTotalMonthly,
+  refetch,
 }: {
   categoryData: Budget;
   color: string;
   onTotalMonthly: (value: number) => void;
+  refetch: () => void;
 }) {
   const sentRef = useRef(false);
   const [data, setData] = useState<Categorystat | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch(`/api/subscriptions/stats/${categoryData.category}`);
-      const data = await res.json();
-      setData(data);
-      if (!sentRef.current) {
-        onTotalMonthly(data.totalMonthly);
-        sentRef.current = true;
+  // const fetchData = async () => {
+  //       const res = await fetch(`/api/subscriptions/stats/${categoryData.category}`);
+  //       const data = await res.json();
+  //       setData(data);
+  //       if (!sentRef.current) {
+  //         onTotalMonthly(data.totalMonthly);
+  //         sentRef.current = true;
+  //       }
+  //     };
+  const fetchData = async () => {
+    const res = await fetch(`/api/subscriptions/stats/${categoryData.category}`);
+    console.log(`fetching the ${categoryData.category}`)
+    const json = await res.json();
+    setData(json);
+
+    if (!sentRef.current) {
+      onTotalMonthly(json.totalMonthly);
+      sentRef.current = true;
+    }
+  };
+  // useEffect(() => {
+    
+  //   fetchData();
+  // }, []);
+    useEffect(() => {
+    let ignore = false;
+
+    async function load() {
+      if (!ignore) {
+        await fetchData();
       }
+    }
+
+    load();
+
+    return () => {
+      ignore = true;
     };
-    fetchData();
-  }, []);
+  }, [categoryData.category]);
 
   const loading = !data; 
 
@@ -42,7 +71,6 @@ export default function CategoryCard({
     <div className="w-full h-44 bg-card text-card-foreground border border-border rounded-2xl py-3 px-5 shadow-sm">
       <div className="flex flex-row items-center mb-4 gap-3">
         
-        {/* ICON box skeleton */}
         {loading ? (
           <Skeleton className="w-12 h-12 rounded-xl" />
         ) : (
@@ -60,7 +88,7 @@ export default function CategoryCard({
         </div>
 
         <div className="ml-auto">
-          {loading ? <Skeleton className="w-6 h-6 rounded-md" /> : <CategoryActions categoryData={categoryData} />}
+          {loading ? <Skeleton className="w-6 h-6 rounded-md" /> : <CategoryActions refetch={refetch} categoryData={categoryData} />}
         </div>
       </div>
 

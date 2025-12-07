@@ -80,6 +80,7 @@ export const PageSidebar = () => {
                                                     border border-transparent 
                                                     hover:border-[#5D6B68]/10
                                                     data-[active=true]:bg-primary
+                                                    data-[active=true]:text-white
                                                     data-[active=true]:border-[#5D6B68]/10"
                                                     
                                         >
