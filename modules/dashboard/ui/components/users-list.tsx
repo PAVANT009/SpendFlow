@@ -13,6 +13,7 @@ export default function UsersStats({data,loading} :{data:Subscription[] ,loading
   monthlyTotal: number ;
   topCategory: { category: string; monthly: number };
   upcomingRenewalsCount: number;
+  nearestRenewal: { id: string; name: string; days: number,amount: number  }
 }>(null);
 
 useEffect(() => {
@@ -53,7 +54,7 @@ useEffect(() => {
         title="Next Renewal"
         icon={<CalendarClock/>}
         amount={String(dashboardData?.upcomingRenewalsCount)}
-        muted="Duolingo Plus - $6.99"
+        muted={` ${dashboardData?.nearestRenewal.name}- $${dashboardData?.nearestRenewal.amount}/month`}
       />
       </div>
     // <div className="w-[25%] h-fit bg-card text-card-foreground border rounded-2xl py-3 px-5 shadow-sm">

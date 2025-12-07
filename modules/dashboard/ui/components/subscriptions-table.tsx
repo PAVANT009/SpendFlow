@@ -44,7 +44,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, CirclePause, MoreHorizontal, RotateCcw, Trash } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -210,8 +210,7 @@ export const columns: ColumnDef<Subscription>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
+    cell: ({  }) => {
 
       return (
         <DropdownMenu>
@@ -223,14 +222,9 @@ export const columns: ColumnDef<Subscription>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem><RotateCcw color="#22c55e"/> Renew</DropdownMenuItem>
+            <DropdownMenuItem><CirclePause color="#f59e0b" /> Hold</DropdownMenuItem>
+            <DropdownMenuItem><Trash color="#dc2626"/> Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -329,8 +323,8 @@ export default function SubscriptionTable({ data, loading }: SubscriptionTablePr
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="overflow-hidden rounded-md border">
-        <Table>
+      <div className="overflow-hidden ">
+        <Table >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

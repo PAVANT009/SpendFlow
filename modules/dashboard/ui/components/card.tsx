@@ -20,10 +20,10 @@ export default function Card(props : CardProps) {
       <div className="flex flex-row items-center gap-2 mt-2">
         {props.mutedicon? 
             (
-              <p className=" text-red-600 flex flex-row text-sm items-center">
+              <div className=" text-red-600 flex flex-row text-sm items-center">
                 {props.mutedicon}{props.percentage}%
-              </p>  )  : null}
-        <p className="text-muted-foreground text-sm">from last month</p>
+              </div>  )  : null}
+        <p className="text-muted-foreground text-sm">{props.muted}</p>
       </div>
     </div>
   )

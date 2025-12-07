@@ -23,17 +23,30 @@ export default function Page() {
   }>(null);
 const [totalUsedBudget, setTotalUsedBudget] = useState(0);
 const [loading,setLoading] = useState(true);
-  useEffect( () => {
-    const fetchData = async() => {
-      const res1 = await fetch("api/budget");
-      const data = await res1.json();
-      setCategoryData(data);
-      const res2 = await fetch("/api/subscriptions/stats");
-      const dataStats = await res2.json();
-      setCardtpData(dataStats);
-      setLoading(false);
+
+  const refetch = async() => {
+    const res1 = await fetch("api/budget");
+    const data = await res1.json();
+    setCategoryData(data);
+    const res2 = await fetch("/api/subscriptions/stats");
+    const dataStats = await res2.json();
+    setCardtpData(dataStats);
+    setLoading(false);
+  }
+  useEffect( () =>  {
+    let ignore = false;
+
+    async function load() {
+      if (!ignore) {
+        await refetch();
+      }
     }
-    fetchData();
+
+    load();
+
+    return () => {
+      ignore = true;
+    }
   },[])
 
   const totalMaxBudget = categoryData?.reduce((sum, item) => sum + Number(item.maxBudget), 0) ?? 0;
@@ -53,7 +66,7 @@ const [loading,setLoading] = useState(true);
         {categoryData?.map((item,index) =>{ 
           return (
             <CategoryCard
-            
+            refetch={refetch}
             onTotalMonthly={(value) => setTotalUsedBudget(prev => prev + value)}
             key={item.id}
             color={colorMap[index ]}

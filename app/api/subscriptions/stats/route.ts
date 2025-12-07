@@ -1,6 +1,5 @@
 import { auth } from "@/app/lib/auth";
 import { db } from "@/app/db";
-import { subscription } from "@/app/db/schema";
 import { NextResponse } from "next/server";
 
 
@@ -64,6 +63,8 @@ export async function GET(req: Request) {
     }
 
     let upcomingRenewalsCount = 0;
+    let nearestRenewal: { id: string; name: string; days: number,amount: number  } | null = null;
+    const upcomingSub: { id: string; name: string; days: number,amount: number, nextRenewal: Date,category: string, }[] = [];
 
     for (const s of subs) {
       const nb = new Date(s.nextBilling);
@@ -72,13 +73,38 @@ export async function GET(req: Request) {
       if (diffDays >= 0 && diffDays <= 7) {
         upcomingRenewalsCount++;
       }
+
+      if (diffDays >= 0) {
+        if (!nearestRenewal || diffDays < nearestRenewal.days) {
+          nearestRenewal = {
+            id: s.id,
+            name: s.name,
+            days: diffDays,
+            amount: Number(s.amount),
+          };
+        }
+
+        if (nb.getMonth() === now.getMonth() && nb.getFullYear() === now.getFullYear()) {
+          upcomingSub.push({
+            id: s.id,
+            name: s.name,
+            days: diffDays,
+            nextRenewal: s.nextBilling,
+            category: s.category,
+            amount: Number(s.amount),
+          });
+        }
+      }
     }
+
 
     return NextResponse.json({
       activeSubscriptions,
       monthlyTotal: Number(monthlyTotal.toFixed(2)),
       topCategory,
       upcomingRenewalsCount,
+      nearestRenewal,
+      upcomingSub
     });
 
   } catch (err) {

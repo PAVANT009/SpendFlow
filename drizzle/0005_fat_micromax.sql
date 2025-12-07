@@ -1,1 +1,0 @@
-ALTER TABLE "subscription" ADD COLUMN "state" boolean DEFAULT true NOT NULL;

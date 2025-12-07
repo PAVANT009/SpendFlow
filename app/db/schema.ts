@@ -114,7 +114,20 @@ export const budget = pgTable("budget", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const notification = pgTable("notification", {
+  id: text("id").primaryKey(),
 
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  message: text("message").notNull(),
+
+  read: boolean("read").default(false).notNull(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+
+})
 
 export const schema = {
   user,
@@ -123,6 +136,7 @@ export const schema = {
   verification,
   subscription,
   budget,
+  notification,
 }
 
 // import { pgTable, text, timestamp, boolean, numeric, integer, } from "drizzle-orm/pg-core";
