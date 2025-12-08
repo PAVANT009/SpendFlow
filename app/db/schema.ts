@@ -4,7 +4,8 @@ import {
   timestamp, 
   boolean, 
   numeric, 
-  integer 
+  integer, 
+  uuid
 } from "drizzle-orm/pg-core";
 
 
@@ -129,6 +130,22 @@ export const notification = pgTable("notification", {
 
 })
 
+export const conversations = pgTable("conversations", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  title: text("title").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const messages = pgTable("messages", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  conversationId: uuid("conversation_id")
+    .references(() => conversations.id)
+    .notNull(),
+  role: text("role").notNull(), // 'user' | 'assistant'
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const schema = {
   user,
   session,
@@ -137,6 +154,8 @@ export const schema = {
   subscription,
   budget,
   notification,
+  messages,
+  conversations
 }
 
 // import { pgTable, text, timestamp, boolean, numeric, integer, } from "drizzle-orm/pg-core";
