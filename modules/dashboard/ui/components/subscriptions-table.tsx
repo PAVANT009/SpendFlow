@@ -142,7 +142,7 @@ export const columns: ColumnDef<Subscription>[] = [
         <Image
           width={1}
           height={1}
-          src={row.original.logoUrl} //have to change it 
+          src={row.original.logoUrl ?? "/next.svg"} //have to change it 
           alt="logo"
           className="w-8 h-8 rounded"
         />
@@ -161,7 +161,7 @@ export const columns: ColumnDef<Subscription>[] = [
         <div className="w-full flex justify-center">
           <div
             className={cn(
-              "capitalize text-sm border-2 rounded-2xl p-2 w-fit",
+              "capitalize text-sm border-2 rounded-2xl px-2 w-fit",
               color
             )}
           >
@@ -222,9 +222,10 @@ export const columns: ColumnDef<Subscription>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem><RotateCcw color="#22c55e"/> Renew</DropdownMenuItem>
-            <DropdownMenuItem><CirclePause color="#f59e0b" /> Hold</DropdownMenuItem>
-            <DropdownMenuItem><Trash color="#dc2626"/> Delete</DropdownMenuItem>
+            <DropdownMenuSeparator/>
+            <DropdownMenuItem className="text-[#22c55e]"><RotateCcw color="#22c55e" /> Renew</DropdownMenuItem>
+            <DropdownMenuItem className="text-[#f59e0b]"><CirclePause color="#f59e0b" /> Hold</DropdownMenuItem>
+            <DropdownMenuItem className="text-[#dc2626]"><Trash color="#dc2626"/> Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -273,7 +274,7 @@ export default function SubscriptionTable({ data, loading }: SubscriptionTablePr
     onRowSelectionChange: setRowSelection,
     initialState:{
       pagination: {
-      pageSize: 4,
+      pageSize: 6,
     },
     },
     state: {
@@ -296,6 +297,7 @@ export default function SubscriptionTable({ data, loading }: SubscriptionTablePr
           }
           className="max-w-sm"
         />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

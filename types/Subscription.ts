@@ -16,6 +16,8 @@ export interface Subscription {
 
   logo_url: string;
 
+  logoUrl?: string | null;
+
   url?: string | null;
 
   domain? : string | null;

@@ -17,7 +17,7 @@ import {
     SidebarMenuItem,
     SidebarMenuButton
  } from "@/components/ui/sidebar";
-import {  StarIcon, BellIcon,LayoutDashboard, Layers, ChartPie  } from "lucide-react";
+import {  StarIcon, BellIcon,LayoutDashboard, Layers, ChartPie, BotMessageSquare  } from "lucide-react";
 
 // import { DashboardUserButton } from "./dashboard-user-button";
 // import { DashboardTrail } from "./dashboard-trail";
@@ -28,6 +28,11 @@ import {  StarIcon, BellIcon,LayoutDashboard, Layers, ChartPie  } from "lucide-r
         label: "Dashboard",
         href: "/",
         icon: LayoutDashboard 
+    },
+    {
+        label: "AI Agent",
+        href: '/agent',
+        icon: BotMessageSquare
     },
     {
         label: "Categories",
