@@ -14,14 +14,12 @@ export async function GET(req: Request) {
     return new Response("Missing conversationId or content", { status: 400 });
   }
 
-  // Save user message
   await db.insert(messages).values({
     conversationId,
     role: "user",
     content,
   });
 
-  // SSE streaming
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
     async start(controller) {
@@ -40,7 +38,6 @@ export async function GET(req: Request) {
         controller.enqueue(encoder.encode(`data: ${text}\n\n`));
       }
 
-      // Save assistant message after streaming
       await db.insert(messages).values({
         conversationId,
         role: "assistant",

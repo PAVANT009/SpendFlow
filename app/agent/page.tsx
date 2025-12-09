@@ -6,19 +6,19 @@ import { useEffect, useState } from "react";
 
 export default function Page() {
     const [conversationId, setConversationId] = useState<string>("");
-      useEffect(() => {
-    async function startConversation() {
-      const res = await fetch("/api/chat/start", { method: "POST" });
-      const data = await res.json();
-      setConversationId(data.id);
-    }
-    startConversation();
+    useEffect(() => {
+      async function startConversation() {
+        const res = await fetch("/api/chat/start", { method: "POST" });
+        const data = await res.json();
+        setConversationId(data.id);
+      }
+      startConversation();
   }, []);
 
   if (!conversationId) return <p>Loading chat...</p>;
 
   return (
-    <div className="px-7 pt-7 w-full  bg-background h-[1300px]">
+    <div className="px-7 py-7 w-full  bg-background h-[1300px]">
         <div className=" flex flex-row justify-between">
             <p className="text-3xl ml-1 mb-1 font-semibold text-foreground">AI Agent</p>
             <div className="border border-border rounded-2xl hover:bg-primary hover:text-foreground hover:cursor-pointer text-sm px-3 py-2 text-muted-foreground">Upgrade to premium</div>        
@@ -39,26 +39,12 @@ export default function Page() {
                     <li>One-click visual reports: trends, forecasts and cancellation impact</li>
                 </ul>
         </div>
-        <div className="bg-muted/50 mt-7 border border-border rounded-2xl">
-          <div className="w-full flex flex-col mt-5 gap-3 justify-center items-center [&>div]:flex [&>div]:flex-row [&>div]:items-center [&>div]:gap-2">
+        <div className="bg-muted/50 my-7 py-3 border border-border rounded-2xl">
+          <div className="w-full flex flex-col my-5 gap-3 justify-center items-center [&>div]:flex [&>div]:flex-row [&>div]:items-center [&>div]:gap-2">
             <div className="font-semibold  "> <BotMessageSquare color="#ffffff " size={19}/> Conversation preview</div>
             <div className="border rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-secondary hover:bg-secondary/80 border-transparent text-secondary-foreground flex items-center gap-1"><GemIcon  size={13}/> Pro feature</div>
           </div>
-          <div className="bg-card border border-border flex flex-col gap-2.5 px-4 py-3 mx-4 my-4 rounded-2xl">
-            <div className="bg-background rounded-2xl px-4 py-4 gap-1.5">
-              <p className="text-muted-foreground text-[12px]">YOU</p>
-              <p className="text-sm font-semibold">Find subscriptions over $20 and categorize them.</p>
-            </div>
-            <div className="bg-background rounded-2xl px-4 py-4 gap-1.5">
-              <p className="text-muted-foreground text-[12px]">YOU</p>
-              <p className="text-sm font-semibold">Find subscriptions over $20 and categorize them.</p>
-            </div>
-            <div className="bg-background rounded-2xl px-4 py-4 gap-1.5">
-              <p className="text-muted-foreground text-[12px]">YOU</p>
-              <p className="text-sm font-semibold">Find subscriptions over $20 and categorize them.</p>
-            </div>
-          </div>
-          <ChatComponent conversationId={conversationId}/>
+          <ChatComponent conversationId={"f15f04d9-34b1-487b-a3af-86d17852b4d5"}/>
         </div>
     </div>
   )
