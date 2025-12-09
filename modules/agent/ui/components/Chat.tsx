@@ -1,5 +1,6 @@
 "use client";
 
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
@@ -10,35 +11,49 @@ export default function ChatComponent({
 }) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
-  const [convo, setConvo] = useState<{content: string,role:string,id:string}[]>()
+  const [convo, setConvo] = useState<{content: string,role:string,id:string}[]>();
+  const [loading,setLoading] = useState(false);
+
   const fetchData = async() => {
-      const res = await fetch(`/api/messages/${conversationId}`);      
-      const data = await res.json();
-        setConvo(data);
-        console.log(data);
-      console.log("data",data);
+      // const res = await fetch(`/api/messages/${conversationId}`);      
+      // const data = await res.json();
+      //   setConvo(data);
+      //   console.log(data);
+      // console.log("data",data);
+      try {
+          setLoading(true);                          
+          const res = await fetch(`/api/messages/${conversationId}`);
+          const data = await res.json();
+          setConvo(data);
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+        } finally {
+          setLoading(false);                         
+        }
       }
-useEffect(() => {
-  let ignore = false;
+  useEffect(() => {
+    let ignore = false;
 
-  async function load() {
-    if (!ignore) {
-      await fetchData()
+    async function load() {
+      if (!ignore) {
+        await fetchData()
+      }
     }
-  }
 
-  load();
+    load();
 
-  return () => {
-    ignore = true; 
-  };
-}, [conversationId]);
+    return () => {
+      ignore = true; 
+    };
+  }, [conversationId]);
 
   const send = () => {
     if (!input) return;
 
     setMessages((m) => [...m, input]);  
     setMessages((m) => [...m, ""]);     
+
+    setLoading(true)
 
     const eventSource = new EventSource(
       `/api/chat/send?conversationId=${conversationId}&content=${encodeURIComponent(
@@ -56,6 +71,7 @@ useEffect(() => {
      eventSource.onerror = async () => {
       eventSource.close();
       await fetchData(); 
+      setLoading(false)
     };
     setInput("");
   };
@@ -97,6 +113,22 @@ useEffect(() => {
               <p className="text-sm font-semibold">{co.content}</p>
             </div>
           ))}
+          {loading && (
+            <div className="flex flex-col gap-1.5">
+              <div className="ml-auto bg-primary text-primary-foreground rounded-2xl px-4 py-4 gap-1.5 max-w-[70%]">
+                <p className="text-muted-foreground text-[12px]">user</p>
+                <p className="text-sm font-semibold">
+                  {messages[messages.length - 2]}
+                </p>
+              </div>
+              <div className="mr-auto bg-background text-foreground rounded-2xl px-4 py-4 gap-1.5 max-w-[70%]">
+                <p className="text-muted-foreground text-[12px]">assistant</p>
+                <p className="text-sm font-semibold">
+                  <Spinner className="mt-1"/>
+                </p>
+              </div>
+            </div>
+            )}
         </div>
 
       </div>
