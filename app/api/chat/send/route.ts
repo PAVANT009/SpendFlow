@@ -50,50 +50,79 @@ export async function GET(req: Request) {
     async start(controller) {
       let assistantMessage = "";
 
-      // Track tool call state
       let toolCallId: string | null = null;
       let toolCallName: string | null = null;
-      let toolCallArgs = ""; // Accumulate arguments across chunks
+      let toolCallArgs = ""; 
 
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         stream: true,
         messages: [
-          { role: "system", content: "You are a helpful assistant." },
+          { role: "system", content: "You are a helpful assistant. and use only this  categories: Entertainment Productivity Health & Fitness Development Cloud Learning" },
           { role: "user", content },
         ],
         tools: [
-          {
-            type: "function",
-            function: {
-              name: "createSubscription",
-              description: "Create a subscription in the database.",
-              parameters: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  amount: { type: "number" },
-                  currency: { type: "string" },
-                  category: { type: "string" },
-                  cycleType: { type: "string" },
-                  cycleCount: { type: "number" },
+        {
+          type: "function",
+          function: {
+            name: "createSubscription",
+            description: "Create a subscription in the database.",
+            parameters: {
+              type: "object",
+              properties: {
+                name: { type: "string" },
+                amount: { type: "number" },
+                currency: { type: "string" },
+                category: { 
+                  type: "string",
+                  enum: [
+                    "Entertainment",
+                    "Productivity",
+                    "Health & Fitness",
+                    "Development",
+                    "Cloud",
+                    "Learning"
+                  ] 
                 },
-                required: ["name", "amount", "currency"],
+                cycleType: { type: "string" },
+                cycleCount: { type: "number" },
               },
+              required: ["name", "amount", "currency"],
             },
           },
-        ],
+        },
+      ]
+
+        // tools: [
+        //   {
+        //     type: "function",
+        //     function: {
+        //       name: "createSubscription",
+        //       description: "Create a subscription in the database.",
+        //       parameters: {
+        //         type: "object",
+        //         properties: {
+        //           name: { type: "string" },
+        //           amount: { type: "number" },
+        //           currency: { type: "string" },
+        //           category: { type: "string" },
+        //           cycleType: { type: "string" },
+        //           cycleCount: { type: "number" },
+        //         },
+        //         required: ["name", "amount", "currency"],
+        //       },
+        //     },
+        //   },
+        // ],
       });
 
       for await (const chunk of completion) {
         const delta = chunk.choices[0].delta;
         console.log("[Stream] Delta chunk:", delta);
 
-        // --- ACCUMULATE TOOL CALL DATA ---
         if (delta?.tool_calls?.length) {
           const toolCall = delta.tool_calls[0];
 
-          // Capture tool call metadata (comes first)
           if (toolCall.id) {
             toolCallId = toolCall.id;
           }
@@ -101,25 +130,21 @@ export async function GET(req: Request) {
             toolCallName = toolCall.function.name;
           }
 
-          // Accumulate arguments string
           if (toolCall.function?.arguments) {
             toolCallArgs += toolCall.function.arguments;
             console.log("[Tool] Accumulated args so far:", toolCallArgs);
           }
         }
 
-        // --- NORMAL ASSISTANT TEXT ---
         if (delta?.content) {
           console.log("[Assistant] Streaming text chunk:", delta.content);
           controller.enqueue(encoder.encode(`data: ${delta.content}\n\n`));
           assistantMessage += delta.content;
         }
 
-        // --- DETECT END OF STREAM ---
         if (chunk.choices[0].finish_reason) {
           console.log("[Stream] Finish reason:", chunk.choices[0].finish_reason);
 
-          // If we accumulated a tool call, execute it now
           if (toolCallId && toolCallName === "createSubscription" && toolCallArgs) {
             let args;
             try {
@@ -133,7 +158,6 @@ export async function GET(req: Request) {
               break;
             }
 
-            // Fetch company info
             let companyData = [];
             try {
               companyData = await fetch(
@@ -145,19 +169,18 @@ export async function GET(req: Request) {
 
             const top = companyData?.[0];
 
-            // Save subscription
             try {
               await db.insert(subscription).values({
                 id: crypto.randomUUID(),
                 userId,
-                name: args.name,
+                name: top?.name || args.name,
                 amount: String(args.amount),
                 currency: args.currency,
                 category: args.category ?? null,
                 cycleType: args.cycleType ?? null,
                 cycleCount: args.cycleCount ?? 1,
-                logoUrl: top?.logo ?? null,
-                url: top?.url ?? null,
+                logoUrl: top?.logo_url ?? null,
+                url: top?.domain ?? null,
                 description: null,
                 startBilling: new Date(),
                 nextBilling: new Date(),
@@ -179,7 +202,7 @@ export async function GET(req: Request) {
             assistantMessage += success;
           }
 
-          break; // Exit loop
+          break; 
         }
       }
 

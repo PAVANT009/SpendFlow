@@ -19,12 +19,11 @@ export default function CompanySearch({ handleSubmit, onSelect }: CompanySearchP
   const [submitting, setSubmitting] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const skipSearchRef = useRef(false); // <-- NEW
+  const skipSearchRef = useRef(false);  
 
-  // search effect
   useEffect(() => {
     if (skipSearchRef.current) {
-      skipSearchRef.current = false; // reset flag (no rerender)
+      skipSearchRef.current = false; 
       return;
     }
 
@@ -38,7 +37,7 @@ export default function CompanySearch({ handleSubmit, onSelect }: CompanySearchP
       setLoading(true);
       const res = await fetch(`/api/company-search?q=${encodeURIComponent(query)}`);
       const data: Subscription[] = await res.json();
-
+      console.log(data);
       setSuggestions(data);
       setLoading(false);
     }, 300);
@@ -46,7 +45,6 @@ export default function CompanySearch({ handleSubmit, onSelect }: CompanySearchP
     return () => clearTimeout(delay);
   }, [query]);
 
-  // close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {

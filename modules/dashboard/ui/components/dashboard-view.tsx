@@ -32,7 +32,7 @@ export default function DashboardPage() {
     <div className="px-6 pt-4 pb-5 bg-background">
       <AddSubscription onSubscriptionAdded={fetchSubscriptions} />
       <UsersStats data={data} loading={loading}/>
-      <SubscriptionTable data={data} loading={loading} />
+      <SubscriptionTable data={data} loading={loading} fetchSubscriptions={fetchSubscriptions} />
     </div>
   );
 }
