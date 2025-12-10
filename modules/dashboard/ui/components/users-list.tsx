@@ -47,14 +47,14 @@ useEffect(() => {
       <Card 
         title="Top Category"
         icon={<TrendingUp/>}
-        amount={String(dashboardData?.topCategory["category"])}
-        muted="$56.00/month"
+        amount={ loading ||  String(dashboardData?.topCategory["category"]) == "undefined" ? <Skeleton className="h-6 w-24" />:String(dashboardData?.topCategory["category"])}
+        muted={dashboardData?.topCategory.monthly ? `$${dashboardData?.topCategory.monthly}/month` : <Skeleton className="h-4 w-32" />}
       />
       <Card
         title="Next Renewal"
         icon={<CalendarClock/>}
-        amount={String(dashboardData?.upcomingRenewalsCount)}
-        muted={` ${dashboardData?.nearestRenewal.name}- $${dashboardData?.nearestRenewal.amount}/month`}
+        amount={ loading ||  String(dashboardData?.upcomingRenewalsCount) == "undefined" ? <Skeleton className="h-6 w-24" />: String(dashboardData?.nearestRenewal.days.toFixed(0)) + " days"}
+        muted={dashboardData?.nearestRenewal.name ?  ` ${dashboardData?.nearestRenewal.name}- $${dashboardData?.nearestRenewal.amount}/month` : <Skeleton className="h-4 w-32" />}
       />
       </div>
     // <div className="w-[25%] h-fit bg-card text-card-foreground border rounded-2xl py-3 px-5 shadow-sm">

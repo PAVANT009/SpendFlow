@@ -44,7 +44,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, CirclePause, MoreHorizontal, RotateCcw, Trash } from "lucide-react"
+import { ArrowUpDown, ChevronDown, CirclePause, MoreHorizontal, RotateCcw, SquarePen, Trash } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -93,8 +93,18 @@ const dateColors: Record<string, string> = {
   scheduled: "bg-green-500/20 text-green-600",
 }
 
+const toggleHold = async (id: string, setState: boolean) => {
+  return fetch("/api/subscriptions/update", {
+    method: "POST",
+    body: JSON.stringify({
+      id,
+      state: setState,
+    }),
+  });
+};
 
-export const columns: ColumnDef<Subscription>[] = [
+
+export const getColumns = (fetchSubscriptions: () => void): ColumnDef<Subscription>[] =>  [
   {
     id: "select",
     header: ({ table }) => (
@@ -208,26 +218,51 @@ export const columns: ColumnDef<Subscription>[] = [
     },
   },
   {
+    accessorKey: "state",
+    header: () => <div className="text-right">Status</div>,
+    cell: ({ row }) => {
+      const status = row.getValue("state") ? "active" : "paused";
+      return <div className={cn("text-right font-medium capitalize", status === "active" ? "text-green-500" : "text-red-500")} >{status}</div>
+    }
+  },
+  {
     id: "actions",
+    header: () => <div className="text-center">Actions</div>,
     enableHiding: false,
-    cell: ({  }) => {
+    cell: ({ row }) => {
 
       return (
+        <div className="flex flex-row w-16 group justify-between relative pl-6">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" className="h-8 w-8 p-0  relative flex  justify-between">
               <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
+              <MoreHorizontal 
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator/>
-            <DropdownMenuItem className="text-[#22c55e]"><RotateCcw color="#22c55e" /> Renew</DropdownMenuItem>
-            <DropdownMenuItem className="text-[#f59e0b]"><CirclePause color="#f59e0b" /> Hold</DropdownMenuItem>
+            <DropdownMenuItem className="text-[#22c55e]" onClick={async () => {
+    await toggleHold(row.original.id, true);
+    fetchSubscriptions() }}><RotateCcw color="#22c55e"/> Renew</DropdownMenuItem>
+            <DropdownMenuItem className="text-[#f59e0b]" onClick={async () => {
+    await toggleHold(row.original.id, false);
+    fetchSubscriptions() }}><CirclePause color="#f59e0b" /> Hold</DropdownMenuItem>
             <DropdownMenuItem className="text-[#dc2626]"><Trash color="#dc2626"/> Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <Button
+              variant="ghost"
+              className="h-8 w-8 p-0  relative flex  justify-between"
+        >
+              <SquarePen
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              />
+        </Button>
+        </div>
       )
     },
   },
@@ -236,9 +271,10 @@ export const columns: ColumnDef<Subscription>[] = [
 interface SubscriptionTableProps {
   data: Subscription[];
   loading: boolean;
+  fetchSubscriptions: () => void;
 }
 
-export default function SubscriptionTable({ data, loading }: SubscriptionTableProps) {
+export default function SubscriptionTable({ data, loading, fetchSubscriptions }: SubscriptionTableProps) {
     // const[data,setData] = React.useState<Subscription[]>([]);
     // const [loading,setLoading] = React.useState(false);
     //   React.useEffect(() => {
@@ -263,7 +299,7 @@ export default function SubscriptionTable({ data, loading }: SubscriptionTablePr
 
   const table = useReactTable({
     data,
-    columns,
+    columns: getColumns(fetchSubscriptions),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),

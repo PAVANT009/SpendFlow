@@ -90,7 +90,7 @@ export function CategoryActions({ categoryData,refetch }: { categoryData: Budget
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="top"
-          className="w-[30%] max-w-[30%] border border-border bg-card rounded-2xl mx-auto pt-1 h-[50vh] max-h-[50vh] mt-24"
+          className="w-[30%] max-w-[30%] border border-border bg-background rounded-2xl mx-auto pt-1 h-[50vh] max-h-[50vh] mt-24"
         >
           <SheetHeader>
             <SheetTitle className="text-2xl text-foreground">
@@ -102,7 +102,7 @@ export function CategoryActions({ categoryData,refetch }: { categoryData: Budget
             </SheetDescription>
           </SheetHeader>
 
-          <div className="flex flex-col h-full px-2.5 overflow-hidden justify-center align-middle">
+          <div className="flex flex-col h-full px-2.5  overflow-hidden justify-center align-middle">
             <div className="flex flex-col gap-2">
               <label className="font-semibold">Category*</label>
               <input

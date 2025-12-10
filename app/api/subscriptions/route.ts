@@ -30,6 +30,7 @@ export async function POST(req: Request) {
       startBilling: new Date(body.startBilling),
       nextBilling: new Date(body.nextBilling),
       reminder: Boolean(body.reminder),
+      state: Boolean(body.state),
       createdAt: new Date(),
       updatedAt: new Date(),
       logoUrl: body.logo_url 
