@@ -23,7 +23,7 @@ export default function Card(props : CardProps) {
               <div className=" text-red-600 flex flex-row text-sm items-center">
                 {props.mutedicon}{props.percentage}%
               </div>  )  : null}
-        <p className="text-muted-foreground text-sm">{props.muted}</p>
+        <div className="text-muted-foreground text-sm">{props.muted}</div>
       </div>
     </div>
   )
