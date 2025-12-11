@@ -93,7 +93,7 @@ const dateColors: Record<string, string> = {
   scheduled: "bg-green-500/20 text-green-600",
 }
 
-const toggleHold = async (id: string, setState: boolean) => {
+const SetState = async (id: string, setState: boolean) => {
   return fetch("/api/subscriptions/update", {
     method: "POST",
     body: JSON.stringify({
@@ -109,6 +109,14 @@ export const getColumns = (fetchSubscriptions: () => void): ColumnDef<Subscripti
     id: "select",
     header: ({ table }) => (
       <Checkbox
+        onClick={() => {
+              const selectedNames = table
+                .getSelectedRowModel()
+                .flatRows
+                .map((row) => row.original.name)
+
+              console.log(selectedNames)
+            }}
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -119,6 +127,7 @@ export const getColumns = (fetchSubscriptions: () => void): ColumnDef<Subscripti
     ),
     cell: ({ row }) => (
       <Checkbox
+        
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
@@ -152,7 +161,7 @@ export const getColumns = (fetchSubscriptions: () => void): ColumnDef<Subscripti
         <Image
           width={1}
           height={1}
-          src={row.original.logoUrl ?? "/next.svg"} //have to change it 
+          src={row.original.logoUrl ?? "/next.svg"} 
           alt="logo"
           className="w-8 h-8 rounded"
         />
@@ -245,12 +254,15 @@ export const getColumns = (fetchSubscriptions: () => void): ColumnDef<Subscripti
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator/>
+            {!(row.original.state) ? (
             <DropdownMenuItem className="text-[#22c55e]" onClick={async () => {
-    await toggleHold(row.original.id, true);
-    fetchSubscriptions() }}><RotateCcw color="#22c55e"/> Renew</DropdownMenuItem>
+                                await SetState(row.original.id, true);
+                                fetchSubscriptions() }}><RotateCcw color="#22c55e"/> Renew</DropdownMenuItem>
+            ):(
             <DropdownMenuItem className="text-[#f59e0b]" onClick={async () => {
-    await toggleHold(row.original.id, false);
-    fetchSubscriptions() }}><CirclePause color="#f59e0b" /> Hold</DropdownMenuItem>
+                                await SetState(row.original.id, false);
+                                fetchSubscriptions() }}><CirclePause color="#f59e0b" /> Hold</DropdownMenuItem>
+            )}
             <DropdownMenuItem className="text-[#dc2626]"><Trash color="#dc2626"/> Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -324,7 +336,7 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
 
   return (
     <div className="w-full bg-card/30 border border-border rounded-2xl px-3">
-      <div className="flex items-center py-4">
+      <div className="flex items-center w-full py-4">
         <Input
           placeholder="Filter names..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -333,6 +345,41 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
           }
           className="max-w-sm"
         />
+
+        {table.getSelectedRowModel().rows.length > 0 && (
+          <div className="ml-auto flex gap-4">
+          <Button className="text-[#22c55e]  border border-border  rounded-md bg-transparent"
+            onClick={() => {
+              const selectedNames = table
+                .getSelectedRowModel()
+                .rows
+                .map(
+                  async(row) => {
+                    await SetState(row.original.id, true);
+                    fetchSubscriptions() }
+                );
+
+              console.log(selectedNames);
+            }}
+          ><RotateCcw color="#22c55e"/> Renew
+          </Button>
+          <Button className="text-[#f59e0b]  border border-border  rounded-md bg-transparent"
+            onClick={() => {
+              const selectedNames = table
+                .getSelectedRowModel()
+                .rows
+                .map(
+                  async(row) => {
+                    await SetState(row.original.id, false);
+                    fetchSubscriptions() }
+                );
+
+              console.log(selectedNames);
+            }}
+          ><CirclePause color="#f59e0b" /> Hold
+          </Button>
+          </div>
+        )}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
