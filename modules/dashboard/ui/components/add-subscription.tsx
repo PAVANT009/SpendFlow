@@ -86,7 +86,7 @@ export default function AddSubscription({ onSubscriptionAdded }: AddSubscription
         
         <SheetContent 
           side="bottom" 
-          className="w-full max-w-2xl rounded-md mx-auto pt-2.5 h-[95vh] max-h-[95vh]"
+          className="w-full max-w-2xl rounded-md mx-auto pt-2.5 h-[95vh] max-h-[95vh] border-0"
         >
           <SheetHeader className=" sr-only">
             <SheetTitle>Add Subscription</SheetTitle>
@@ -95,7 +95,7 @@ export default function AddSubscription({ onSubscriptionAdded }: AddSubscription
 
           <div className="flex flex-col h-full overflow-hidden">
 
-            <div className="flex-grow overflow-y-auto p-6 pt-0">
+            <div className="grow overflow-y-auto p-6 pt-0">
               <CompanySearch handleSubmit={handleFormSubmit}  onSelect={(c) => console.log( "data coming from CompanySearch:" +  c)} />
             </div>
 
