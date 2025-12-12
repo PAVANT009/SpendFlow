@@ -42,46 +42,73 @@ export default function MyForm({ onSubmit, submitting = false, initialValues, pr
       cycleCount: initialValues?.cycleCount ?? 1,
       logo_url: initialValues?.logo_url ?? "",
       ...initialValues,
+      startBilling: initialValues?.startBilling
+    ? formatDate(new Date(initialValues.startBilling))
+    : "",
+  nextBilling: initialValues?.nextBilling
+    ? formatDate(new Date(initialValues.nextBilling))
+    : "",
     }
   });
 
   const cycleType = watch("cycleType");
   const cycleCount = watch("cycleCount");
 
-useEffect(() => {
-  if (!prefillValues) return;
+    useEffect(() => {
+      if (!prefillValues) return;
 
-  console.log(prefillValues);
-  type SubscriptionKey = keyof Subscription;
+      console.log(prefillValues);
+      type SubscriptionKey = keyof Subscription;
 
-  (Object.entries(prefillValues) as [SubscriptionKey, Subscription[SubscriptionKey]][])
-    .forEach(([key, value]) => {
-      if (value !== undefined) {
-        setValue(key, value, {
-          shouldDirty: true,
-          shouldValidate: true,
+      (Object.entries(prefillValues) as [SubscriptionKey, Subscription[SubscriptionKey]][])
+        .forEach(([key, value]) => {
+          if (value !== undefined) {
+            setValue(key, value, {
+              shouldDirty: true,
+              shouldValidate: true,
+            });
+          }
         });
-      }
-    });
-}, [prefillValues, setValue]);
+    }, [prefillValues, setValue]);
 
+
+  // useEffect(() => {
+  //   if (!cycleType || !cycleCount) return;
+
+  //   const today = new Date();
+  //   const startDate = today;
+  //   const nextDate = new Date(today);
+
+  //   if (cycleType === "month") {
+  //     nextDate.setMonth(today.getMonth() + Number(cycleCount));
+  //   } else if (cycleType === "year") {
+  //     nextDate.setFullYear(today.getFullYear() + Number(cycleCount));
+  //   }
+
+  //   setValue("startBilling", formatDate(startDate));
+  //   setValue("nextBilling", formatDate(nextDate));
+  // }, [cycleType, cycleCount, setValue]);
 
   useEffect(() => {
-    if (!cycleType || !cycleCount) return;
+  if (initialValues && initialValues.startBilling && initialValues.nextBilling) {
+    console.log("Initial values for billing dates exist, skipping auto-fill.");
+    return;
+  }
 
-    const today = new Date();
-    const startDate = today;
-    const nextDate = new Date(today);
+  const today = new Date();
+  const startDate = today;
+  const nextDate = new Date(today);
 
-    if (cycleType === "month") {
-      nextDate.setMonth(today.getMonth() + Number(cycleCount));
-    } else if (cycleType === "year") {
-      nextDate.setFullYear(today.getFullYear() + Number(cycleCount));
-    }
+  if (cycleType === "month") {
+    nextDate.setMonth(today.getMonth() + Number(cycleCount));
+  } else if (cycleType === "year") {
+    nextDate.setFullYear(today.getFullYear() + Number(cycleCount));
+  }
 
-    setValue("startBilling", formatDate(startDate));
-    setValue("nextBilling", formatDate(nextDate));
-  }, [cycleType, cycleCount, setValue]);
+  setValue("startBilling", formatDate(startDate));
+  setValue("nextBilling", formatDate(nextDate));
+}, [cycleType, cycleCount, initialValues, setValue]);
+
 
   const handleFormSubmit = (data: Subscription) => {
     if (onSubmit) {

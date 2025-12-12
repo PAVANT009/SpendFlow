@@ -71,6 +71,8 @@ import { cn } from "@/lib/utils"
 import { formatToDDMMYYYY, getDateStatus } from "@/util/useDateDifference"
 import { Skeleton } from "@/components/ui/skeleton"
 import Image from "next/image"
+import MyForm from "./my-form"
+import { EditForm } from "./edit-form"
   // Entertainment: "border-blue-500 text-blue-600",
   // Productivity: "border-purple-500 text-purple-600",
   // "Health & Fitness": "border-pink-500 text-pink-600",
@@ -93,6 +95,8 @@ const dateColors: Record<string, string> = {
   scheduled: "bg-green-500/20 text-green-600",
 }
 
+
+
 const SetState = async (id: string, setState: boolean) => {
   return fetch("/api/subscriptions/update", {
     method: "POST",
@@ -104,7 +108,11 @@ const SetState = async (id: string, setState: boolean) => {
 };
 
 
-export const getColumns = (fetchSubscriptions: () => void): ColumnDef<Subscription>[] =>  [
+export const getColumns = (
+  fetchSubscriptions: () => void,
+  setSelectedRow: (row: Subscription | undefined) => void,
+  setOpenEdit: (open: boolean) => void
+): ColumnDef<Subscription>[] =>  [
   {
     id: "select",
     header: ({ table }) => (
@@ -148,6 +156,7 @@ export const getColumns = (fetchSubscriptions: () => void): ColumnDef<Subscripti
     header: ({ column }) => {
       return (
         <Button
+          type="button"
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
@@ -238,10 +247,11 @@ export const getColumns = (fetchSubscriptions: () => void): ColumnDef<Subscripti
     id: "actions",
     header: () => <div className="text-center">Actions</div>,
     enableHiding: false,
-    cell: ({ row }) => {
+    cell: ({ row,  }) => {
+
 
       return (
-        <div className="flex flex-row w-16 group justify-between relative pl-6">
+        <div className="flex flex-row w-16  justify-between relative pl-6">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0  relative flex  justify-between">
@@ -267,10 +277,16 @@ export const getColumns = (fetchSubscriptions: () => void): ColumnDef<Subscripti
           </DropdownMenuContent>
         </DropdownMenu>
         <Button
+              type="button"
               variant="ghost"
               className="h-8 w-8 p-0  relative flex  justify-between"
+              onClick={() => {
+                        setSelectedRow(row.original)
+                        setOpenEdit(true)
+                      }}
         >
               <SquarePen
+                     
                     className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
               />
         </Button>
@@ -301,7 +317,8 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
     //     }
     //     fetchData();
     // },[])
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const [selectedRow, setSelectedRow] = React.useState<Subscription | undefined>();  const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
@@ -311,7 +328,8 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
 
   const table = useReactTable({
     data,
-    columns: getColumns(fetchSubscriptions),
+    columns: getColumns(
+      fetchSubscriptions,setSelectedRow,setOpenEdit),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -334,8 +352,15 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
 
   })
 
+
+
   return (
     <div className="w-full bg-card/30 border border-border rounded-2xl px-3">
+      <EditForm
+        open={openEdit}
+        onOpenChange={setOpenEdit}
+        data={selectedRow }
+      />
       <div className="flex items-center w-full py-4">
         <Input
           placeholder="Filter names..."
@@ -348,42 +373,42 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
 
         {table.getSelectedRowModel().rows.length > 0 && (
           <div className="ml-auto flex gap-4">
-          <Button className="text-[#22c55e]  border border-border  rounded-md bg-transparent"
-            onClick={() => {
-              const selectedNames = table
-                .getSelectedRowModel()
-                .rows
-                .map(
-                  async(row) => {
-                    await SetState(row.original.id, true);
-                    fetchSubscriptions() }
-                );
+          <Button className="text-[#22c55e]  border border-border  rounded-md bg-transparent hover:bg-background"
+            onClick={async () => {
 
-              console.log(selectedNames);
+              const selectedRows = table.getSelectedRowModel().rows;
+
+              for (const row of selectedRows) {
+                await SetState(row.original.id, true);
+              }
+
+              await fetchSubscriptions();
+
+              setRowSelection({});
             }}
           ><RotateCcw color="#22c55e"/> Renew
           </Button>
-          <Button className="text-[#f59e0b]  border border-border  rounded-md bg-transparent"
-            onClick={() => {
-              const selectedNames = table
-                .getSelectedRowModel()
-                .rows
-                .map(
-                  async(row) => {
-                    await SetState(row.original.id, false);
-                    fetchSubscriptions() }
-                );
+          <Button className="text-[#f59e0b]  border border-border   rounded-md bg-transparent"
+            onClick={async () => {
 
-              console.log(selectedNames);
+              const selectedRows = table.getSelectedRowModel().rows;
+
+              for (const row of selectedRows) {
+                await SetState(row.original.id, false);
+              }
+
+              await fetchSubscriptions();
+
+              setRowSelection({});
             }}
           ><CirclePause color="#f59e0b" /> Hold
           </Button>
           </div>
         )}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+        <DropdownMenu >
+          <DropdownMenuTrigger asChild >
+            <Button variant="outline" className="ml-auto ">
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -459,6 +484,7 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="group"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
