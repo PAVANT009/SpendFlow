@@ -19,7 +19,7 @@ function formatDate(d: Date) {
 }
 
 interface MyFormProps {
-  onSubmit?: (data: Subscription) => void | Promise<void>;
+  onSubmit: (data: Subscription) => void | Promise<void>;
   submitting?: boolean;
   initialValues?: Partial<Subscription>;
   prefillValues?: Partial<Subscription>;
@@ -129,7 +129,7 @@ export default function MyForm({ onSubmit, submitting = false, initialValues, pr
     "border border-input p-2 rounded w-full text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary";
 
   return (
-    <form id="subscription-form" onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+    <form id="subscription-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="flex flex-row gap-2 w-full ">
         <div className="flex-1">
           <input

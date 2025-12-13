@@ -130,21 +130,51 @@ export const notification = pgTable("notification", {
 
 })
 
+// export const conversations = pgTable("conversations", {
+//   id: uuid("id").defaultRandom().primaryKey(),
+//   title: text("title").notNull(),
+//   createdAt: timestamp("created_at").defaultNow(),
+// });
+
 export const conversations = pgTable("conversations", {
   id: uuid("id").defaultRandom().primaryKey(),
+
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
   title: text("title").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+
+// export const messages = pgTable("messages", {
+//   id: uuid("id").defaultRandom().primaryKey(),
+//   conversationId: uuid("conversation_id")
+//     .references(() => conversations.id)
+//     .notNull(),
+//   role: text("role").notNull(), // 'user' | 'assistant'
+//   content: text("content").notNull(),
+//   createdAt: timestamp("created_at").defaultNow(),
+// });
 
 export const messages = pgTable("messages", {
   id: uuid("id").defaultRandom().primaryKey(),
+
   conversationId: uuid("conversation_id")
-    .references(() => conversations.id)
-    .notNull(),
+    .notNull()
+    .references(() => conversations.id, { onDelete: "cascade" }),
+
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
   role: text("role").notNull(), // 'user' | 'assistant'
   content: text("content").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
 
 export const schema = {
   user,
