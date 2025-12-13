@@ -360,6 +360,16 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
         open={openEdit}
         onOpenChange={setOpenEdit}
         data={selectedRow }
+        onSubmit={async (values) => {
+        await fetch("/api/subscriptions/update", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+
+    await fetchSubscriptions();
+    setOpenEdit(false);
+  }}
       />
       <div className="flex items-center w-full py-4">
         <Input

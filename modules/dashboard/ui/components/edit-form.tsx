@@ -13,7 +13,7 @@ import {
 import MyForm from "./my-form"
 import { Subscription } from "@/types/Subscription";
 
-export function EditForm({ open, onOpenChange,data }: {open?: boolean; onOpenChange?: (open: boolean) => void; data?: Subscription }) {
+export function EditForm({ open, onOpenChange,data,onSubmit }: {open?: boolean; onOpenChange?: (open: boolean) => void; data?: Subscription; onSubmit: (values: Subscription) => Promise<void>}) {
     console.log(open, onOpenChange, data);
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -35,9 +35,12 @@ export function EditForm({ open, onOpenChange,data }: {open?: boolean; onOpenCha
             <Input id="sheet-demo-username" defaultValue="@peduarte" />
           </div>
         </div> */}
-        <MyForm initialValues={data}/>
+        <MyForm initialValues={data}  onSubmit={onSubmit}/>
         <SheetFooter>
-          <Button type="submit">Save changes</Button>
+          <Button 
+            type="submit"
+            form="subscription-form"
+          >Save changes</Button>
           <SheetClose asChild>
             <Button variant="outline">Close</Button>
           </SheetClose>
