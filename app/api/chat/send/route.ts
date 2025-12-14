@@ -40,6 +40,7 @@ export async function GET(req: Request) {
   // Save user message
   console.log("[DB] Saving user message:", content);
   await db.insert(messages).values({
+    userId: userId,
     conversationId,
     role: "user",
     content,
@@ -208,6 +209,7 @@ export async function GET(req: Request) {
 
       console.log("[Assistant] Final message saved:", assistantMessage);
       await db.insert(messages).values({
+        userId: userId,
         conversationId,
         role: "assistant",
         content: assistantMessage,

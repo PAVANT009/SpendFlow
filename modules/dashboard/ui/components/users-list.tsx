@@ -15,16 +15,39 @@ export default function UsersStats({data,loading} :{data:Subscription[] ,loading
   upcomingRenewalsCount: number;
   nearestRenewal: { id: string; name: string; days: number,amount: number  }
 }>(null);
-
 useEffect(() => {
   const fetchData = async () => {
-    const res = await fetch("/api/subscriptions/stats");
-    const dataStats = await res.json();
-    setDashboardData(dataStats);
+    try {
+      const res = await fetch("/api/subscriptions/stats");
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const dataStats = await res.json();
+
+      setDashboardData({
+        activeSubscriptions: dataStats?.activeSubscriptions ?? 0,
+        monthlyTotal: dataStats?.monthlyTotal ?? 0,
+        topCategory: {
+          category: dataStats?.topCategory?.category ?? "",
+          monthly: dataStats?.topCategory?.monthly ?? 0,
+        },
+        upcomingRenewalsCount: dataStats?.upcomingRenewalsCount ?? 0,
+        nearestRenewal: {
+          id: dataStats?.nearestRenewal?.id ?? "",
+          name: dataStats?.nearestRenewal?.name ?? "",
+          days: dataStats?.nearestRenewal?.days ?? 0,
+          amount: dataStats?.nearestRenewal?.amount ?? 0,
+        }
+      });
+    } catch (error) {
+      console.error("Failed to fetch dashboard stats:", error);
+    }
   };
-  
+
   fetchData();
-}, [data]);
+}, [data]); 
 
 
 
