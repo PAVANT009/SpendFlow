@@ -1,3 +1,6 @@
+import "server-only";
+
+
 import { betterAuth } from "better-auth";
 
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -8,17 +11,31 @@ import { polarClient } from "./polar";
 
 
 export const auth = betterAuth({
-    plugin: [
+    // plugin: [
+    //     polar({
+    //         client: polarClient,
+    //         createCustomerOnSignUp: true,
+    //         use: [
+    //             checkout({
+    //                 authenticatedUsersOnly: true,
+    //                 successUrl: "/upgrade",
+    //             }),
+    //             portal()
+    //         ]
+    //     })
+    // ],
+    plugins: [
         polar({
             client: polarClient,
             createCustomerOnSignUp: true,
             use: [
                 checkout({
                     authenticatedUsersOnly: true,
-                    successUrl: "/upgrade",
-                })
-            ]
-        })
+                    successUrl: "/upgrade"
+                }),
+                portal(),
+            ],
+        }),
     ],
     socialProviders: {
         github: { 

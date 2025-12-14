@@ -44,7 +44,7 @@ export const SignInView = () => {
           setLoading(false);
           router.push("/");
         },
-        onError: ({ error }) => {
+        onError: ({ error }:{ error: { message: string } } ) => {
           setLoading(false);
           setError(error.message);
         },

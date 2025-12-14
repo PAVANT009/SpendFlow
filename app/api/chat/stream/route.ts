@@ -3,6 +3,8 @@ import OpenAI from "openai"
 import { eq } from "drizzle-orm";
 import { db } from "@/app/db";
 import { messages } from "@/app/db/schema";
+import { NextResponse } from "next/server";
+import { auth } from "@/app/lib/auth";
 
 export const runtime = "edge";
 
@@ -11,6 +13,15 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const cid = searchParams.get("cid");
+
+    const session = await auth.api.getSession({ headers: req.headers });
+  
+    if (!session || !session.user) {
+      console.error("[Auth] Unauthorized request");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  
+    const userId = String(session.user.id);
 
   const history = await db.query.messages.findMany({
     where: eq(messages.conversationId, cid!),
@@ -38,6 +49,7 @@ export async function GET(req: Request) {
       }
 
       await db.insert(messages).values({
+        userId: userId,
         conversationId: cid!,
         role: "assistant",
         content: fullText,

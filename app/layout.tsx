@@ -4,8 +4,9 @@ import "./globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/next";
-import { authClient } from "./lib/auth-clent";
+import { auth } from "./lib/auth";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { PageSidebar } from "@/modules/page/ui/components/page-sidebar";
 import { PageNavbar } from "@/modules/page/ui/components/page-navbar";
@@ -24,11 +25,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await authClient.getSession();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  if (!session) {
-    redirect("/sign-up");
-  }
 
   return (
     <html lang="en" suppressHydrationWarning>
