@@ -28,6 +28,7 @@ export default async function RootLayout({
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+  console.log("layout session", session);
 
 
   return (
@@ -40,13 +41,20 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-    <SidebarProvider >
-        <PageSidebar/>
-        <main className="flex flex-col h-screen w-screen bg-muted">
-        <PageNavbar/>
-        {children}
-        </main>
-    </SidebarProvider>
+            {
+              !session?.user ? (
+                children
+              ) : (
+          <SidebarProvider >
+              <PageSidebar/>
+                  <main className="flex flex-col h-screen w-screen bg-muted">
+                  <PageNavbar/>
+                  {children}
+                  </main>
+          </SidebarProvider>
+            )
+                      }
+
           </ThemeProvider>
         </NuqsAdapter>
       </body>

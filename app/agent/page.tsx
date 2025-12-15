@@ -3,9 +3,54 @@
 import ChatComponent from "@/modules/agent/ui/components/Chat";
 import { BotMessageSquare, GemIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { authClient } from "../lib/auth-clent";
+import { polarClient } from "../lib/polar";
 
 export default function Page() {
     const [conversationId, setConversationId] = useState<string>("");
+    const [chatfn,setChatfn] = useState(true);
+
+      const [userId, setUserId] = useState<string | null>(null);
+      const [loading, setLoading] = useState(true);
+      const [premuser,setPremuser] = useState(false);
+
+
+useEffect(() => {
+  let mounted = true;
+
+  async function init() {
+    // 1️⃣ Get session
+    const session = await authClient.getSession();
+
+    if (!session?.data?.user?.id) {
+      if (mounted) {
+        setLoading(false);
+      }
+      return;
+    }
+
+    if (mounted) {
+      setUserId(session.data.user.id);
+    }
+
+    // 2️⃣ Ask SERVER if user is paid
+    const res = await fetch("/api/premium/status");
+    const data = await res.json();
+
+    if (mounted) {
+      setPremuser(data.isPaid);
+      setChatfn(!data.isPaid); // block chat if not paid
+      setLoading(false);
+    }
+  }
+
+  init();
+
+  return () => {
+    mounted = false;
+  };
+}, []);
+    
     useEffect(() => {
       async function startConversation() {
         const res = await fetch("/api/chat/start", { method: "POST" });
@@ -14,11 +59,19 @@ export default function Page() {
       }
       startConversation();
   }, []);
+  
+  // if (!conversationId) return <p>Loading chat...</p>;
+  // const customer = await polarClient.customers.getStateExternal({
+  //   externalId: userId,
+  // });
 
-  if (!conversationId) return <p>Loading chat...</p>;
-
+  // const isPaid =
+  //   customer.activeSubscriptions &&
+  //   customer.activeSubscriptions.length > 0;
   return (
     <div className="px-7 py-7 w-full  bg-background h-[1300px]">
+      {!conversationId && (
+        <>
         <div className=" flex flex-row justify-between">
             <p className="text-3xl ml-1 mb-1 font-semibold text-foreground">AI Agent</p>
             <div className="border border-border rounded-2xl hover:bg-primary hover:text-foreground hover:cursor-pointer text-sm px-3 py-2 text-muted-foreground">Upgrade to premium</div>        
@@ -39,12 +92,15 @@ export default function Page() {
                     <li>One-click visual reports: trends, forecasts and cancellation impact</li>
                 </ul>
         </div>
+        </>
+        )}
+
         <div className="bg-muted/50 my-7 py-3 border border-border rounded-2xl">
           <div className="w-full flex flex-col my-5 gap-3 justify-center items-center [&>div]:flex [&>div]:flex-row [&>div]:items-center [&>div]:gap-2">
             <div className="font-semibold  "> <BotMessageSquare color="#ffffff " size={19}/> Conversation preview</div>
             <div className="border rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-secondary hover:bg-secondary/80 border-transparent text-secondary-foreground flex items-center gap-1"><GemIcon  size={13}/> Pro feature</div>
           </div>
-          <ChatComponent conversationId={"f15f04d9-34b1-487b-a3af-86d17852b4d5"}/>
+          <ChatComponent chatfn={chatfn}  conversationId={conversationId}/>
         </div>
     </div>
   )
