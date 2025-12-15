@@ -29,7 +29,7 @@ export default function DashboardPage() {
   }, [fetchSubscriptions]);
 
   return (
-    <div className="px-6 pt-4 pb-5 bg-background">
+    <div className="px-6 pt-4 pb-5 bg-background h-screen">
       <AddSubscription onSubscriptionAdded={fetchSubscriptions} />
       <UsersStats data={data} loading={loading}/>
       <SubscriptionTable data={data} loading={loading} fetchSubscriptions={fetchSubscriptions} />
