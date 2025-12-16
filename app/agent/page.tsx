@@ -8,18 +8,16 @@ import { polarClient } from "../lib/polar";
 
 export default function Page() {
     const [conversationId, setConversationId] = useState<string>("");
-    const [chatfn,setChatfn] = useState(true);
+    const [chatEnabled,setChatEnabled] = useState(true);
 
       const [userId, setUserId] = useState<string | null>(null);
       const [loading, setLoading] = useState(true);
-      const [premuser,setPremuser] = useState(false);
 
 
 useEffect(() => {
   let mounted = true;
 
   async function init() {
-    // 1️⃣ Get session
     const session = await authClient.getSession();
 
     if (!session?.data?.user?.id) {
@@ -33,13 +31,11 @@ useEffect(() => {
       setUserId(session.data.user.id);
     }
 
-    // 2️⃣ Ask SERVER if user is paid
-    const res = await fetch("/api/premium/status");
+    const res = await fetch("/api/upgrade/status");
     const data = await res.json();
 
     if (mounted) {
-      setPremuser(data.isPaid);
-      setChatfn(!data.isPaid); // block chat if not paid
+      setChatEnabled(data.isPaid); 
       setLoading(false);
     }
   }
@@ -68,6 +64,9 @@ useEffect(() => {
   // const isPaid =
   //   customer.activeSubscriptions &&
   //   customer.activeSubscriptions.length > 0;
+
+        console.log(chatEnabled, userId);
+
   return (
     <div className="px-7 py-7 w-full  bg-background h-[1300px]">
       {!conversationId && (
@@ -100,7 +99,7 @@ useEffect(() => {
             <div className="font-semibold  "> <BotMessageSquare color="#ffffff " size={19}/> Conversation preview</div>
             <div className="border rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-secondary hover:bg-secondary/80 border-transparent text-secondary-foreground flex items-center gap-1"><GemIcon  size={13}/> Pro feature</div>
           </div>
-          <ChatComponent chatfn={chatfn}  conversationId={conversationId}/>
+          <ChatComponent chatEnabled={chatEnabled}  conversationId={conversationId}/>
         </div>
     </div>
   )

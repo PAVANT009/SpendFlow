@@ -10,6 +10,7 @@ import { headers } from "next/headers";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { PageSidebar } from "@/modules/page/ui/components/page-sidebar";
 import { PageNavbar } from "@/modules/page/ui/components/page-navbar";
+import { Providers } from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,29 +35,19 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <NuqsAdapter>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {
-              !session?.user ? (
-                children
-              ) : (
-          <SidebarProvider >
-              <PageSidebar/>
-                  <main className="flex flex-col h-screen w-screen bg-muted">
-                  <PageNavbar/>
-                  {children}
-                  </main>
-          </SidebarProvider>
-            )
-                      }
-
-          </ThemeProvider>
-        </NuqsAdapter>
+        <Providers>
+      {!session?.user ? (
+        children
+      ) : (
+        <SidebarProvider>
+          <PageSidebar />
+          <main className="flex flex-col flex-1 w-full bg-muted">
+            <PageNavbar />
+            {children}
+          </main>
+        </SidebarProvider>
+      )}
+    </Providers>
       </body>
     </html>
   );
