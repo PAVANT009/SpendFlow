@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/app/lib/auth";
 import { polarClient } from "@/app/lib/polar";
-import Error from "next/error";
+
+type PolarError = {
+  statusCode?: number;
+};
 
 export async function GET(req: Request) {
   const session = await auth.api.getSession({
@@ -17,14 +20,17 @@ export async function GET(req: Request) {
       externalId: session.user.id,
     });
 
-    const isPaid = customer.activeSubscriptions?.length > 0;
+    const isPaid = (customer.activeSubscriptions?.length ?? 0) > 0;
 
     return NextResponse.json({ isPaid });
-  } catch (err : any)  {
-    // Customer not created yet = free user
-    if (err.statusCode === 404) {
+  } catch (err: unknown) {
+    const error = err as PolarError;
+
+    if (error.statusCode === 404) {
       return NextResponse.json({ isPaid: false });
     }
+
+    console.error("Polar subscription check failed:", err);
 
     return NextResponse.json(
       { error: "Failed to check subscription" },

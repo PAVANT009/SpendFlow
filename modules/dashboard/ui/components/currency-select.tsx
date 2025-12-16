@@ -112,7 +112,8 @@ export function CurrencySelect({ value, onChange }: {
                   }}
                 >
                   <span className="mr-2">{c.symbol}</span>
-                  {c.label}
+                  {/* {c.label} */}
+                  {c.value}
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",

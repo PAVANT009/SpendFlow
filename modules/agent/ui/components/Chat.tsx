@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 export default function ChatComponent({
-  conversationId,chatfn
+  conversationId,chatEnabled
 }: {
   conversationId: string;
-  chatfn?: boolean;
+  chatEnabled?: boolean;
 }) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
@@ -138,11 +138,11 @@ export default function ChatComponent({
   }
     <div className="px-4 py-2.5 my-3 bg-card border border-border mx-3.5 rounded-2xl">
       <input
-        disabled={chatfn}
+        disabled={loading ||  !chatEnabled}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Type a message..."
-        className={`w-[93%] border border-border/50 rounded-[10px]  px-3.5 py-2 mr-1 ${chatfn ? "cursor-not-allowed opacity-60" : "cursor-text"}`}
+        className={`w-[93%] border border-border/50 rounded-[10px]  px-3.5 py-2 mr-1 ${!chatEnabled ? "cursor-not-allowed opacity-60" : "cursor-text"}`}
       />
       <button className="rounded-2xl bg-primary px-3 py-2 ml-1" onClick={send}>Send</button>
   </div>
