@@ -6,11 +6,9 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { PanelLeftIcon, PanelRightIcon, SearchIcon } from "lucide-react";
 import { ModeToggleBtn } from "@/components/theme-button";
 import { CurrencySelect } from "@/modules/dashboard/ui/components/currency-select";
-import { useCurrency } from "@/currency-context";
 
 export const PageNavbar = () => {
   const { state, toggleSidebar, isMobile } = useSidebar();
-  const { currency, setCurrency } = useCurrency();
   const [commandOpen, setCommandOpen] = useState(false);
 
   useEffect(() => {
@@ -48,7 +46,7 @@ export const PageNavbar = () => {
       </Button>
 
       <div className="flex flex-row justify-end gap-x-2">
-        <CurrencySelect value={currency} onChange={setCurrency} />
+        <CurrencySelect />
         <ModeToggleBtn />
       </div>
     </nav>

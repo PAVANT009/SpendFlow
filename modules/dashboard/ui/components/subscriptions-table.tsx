@@ -73,6 +73,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import Image from "next/image"
 import MyForm from "./my-form"
 import { EditForm } from "./edit-form"
+import { useCurrency } from "@/currency-context"
+
   // Entertainment: "border-blue-500 text-blue-600",
   // Productivity: "border-purple-500 text-purple-600",
   // "Health & Fitness": "border-pink-500 text-pink-600",
@@ -98,6 +100,7 @@ const dateColors: Record<string, string> = {
 
 
 const SetState = async (id: string, setState: boolean) => {
+
   return fetch("/api/subscriptions/update", {
     method: "POST",
     body: JSON.stringify({
@@ -111,7 +114,9 @@ const SetState = async (id: string, setState: boolean) => {
 export const getColumns = (
   fetchSubscriptions: () => void,
   setSelectedRow: (row: Subscription | undefined) => void,
-  setOpenEdit: (open: boolean) => void
+  setOpenEdit: (open: boolean) => void,
+  convert: (amount: number) => number,
+  currency: string,
 ): ColumnDef<Subscription>[] =>  [
   {
     id: "select",
@@ -226,11 +231,12 @@ export const getColumns = (
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"))
+      const converted = convert(Number(amount));
 
       const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
+      style: "currency",
+      currency: currency.toUpperCase(),
+    }).format(converted);
 
       return <div className="text-right font-medium">{formatted}</div>
     },
@@ -325,11 +331,13 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const { currency, convert } = useCurrency();
+
 
   const table = useReactTable({
     data,
     columns: getColumns(
-      fetchSubscriptions,setSelectedRow,setOpenEdit),
+      fetchSubscriptions,setSelectedRow,setOpenEdit,convert,currency),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
