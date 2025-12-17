@@ -6,10 +6,14 @@ import AddSubscription from './add-subscription';
 import SubscriptionTable from './subscriptions-table';
 import { useEffect, useState, useCallback } from 'react';
 import UsersStats from './users-list';
+import { useCurrency } from '@/currency-context';
 
 export default function DashboardPage() {
   const [data, setData] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(false);
+  const { currency } = useCurrency();
+  
+  console.log('Current currency in Dashboard:', currency);
 
   const fetchSubscriptions = useCallback(async () => {
     setLoading(true);

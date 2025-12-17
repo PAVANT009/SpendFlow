@@ -13,15 +13,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { currencyOptions } from "@/data/currency-options";
-
+import { useCurrency } from "@/currency-context";
 import { cn } from "@/lib/utils";
 
 const currencies = currencyOptions;
 
-export function CurrencySelect({ value, onChange }: {
-  value: string;
-  onChange: (val: string) => void;
-}) {
+export function CurrencySelect() {
+  const { currency, setCurrency } = useCurrency();
   const [open, setOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -70,10 +68,10 @@ export function CurrencySelect({ value, onChange }: {
           aria-expanded={open}
           className="w-full justify-between text-sm text-muted-foreground"
         >
-          {value
-            ? currencies.find((c) => c.value === value)?.symbol +
+          {currency
+            ? currencies.find((c) => c.value === currency)?.symbol +
               " " +
-              currencies.find((c) => c.value === value)?.value
+              currencies.find((c) => c.value === currency)?.value
             : "Select currency"}
           <ChevronsUpDown className="h-4 w-4 opacity-50" />
         </Button>
@@ -107,7 +105,7 @@ export function CurrencySelect({ value, onChange }: {
                   key={c.value}
                   value={c.value}
                   onSelect={(currentValue) => {
-                    onChange(currentValue === value ? "" : currentValue);
+                    setCurrency(currentValue === currency ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
@@ -117,7 +115,7 @@ export function CurrencySelect({ value, onChange }: {
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
-                      value === c.value ? "opacity-100" : "opacity-0"
+                      currency === c.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

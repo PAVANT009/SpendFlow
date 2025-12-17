@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowUpRight, CalendarClock, CreditCard, IndianRupee, TrendingUp, User } from "lucide-react";
+import { ArrowUpRight, CalendarClock, CreditCard, Currency, IndianRupee, TrendingUp, User } from "lucide-react";
 import Card from "./card";
 import { Subscription } from "@/types/Subscription";
+import { useCurrency } from "@/currency-context";
+import { currencyOptions } from "@/data/currency-options";
 
 export default function UsersStats({data,loading} :{data:Subscription[] ,loading: boolean}) {
-
+    const {  convert,currency } = useCurrency();
   const [dashboardData, setDashboardData] = useState<null | {
   activeSubscriptions: number;
   monthlyTotal: number ;
@@ -53,32 +55,67 @@ useEffect(() => {
 
   return (
     <div className="flex flex-row gap-7 mx-5 mb-6">
-      <Card
+      {/* <Card
         title="Monthly Spending"
         icon={<IndianRupee/>}
-        amount={loading || String(dashboardData?.monthlyTotal) == "undefined" ? <Skeleton className="h-6 w-24" /> : String(dashboardData?.monthlyTotal)}
+        amount={loading || String(convert(dashboardData?.monthlyTotal ?? 0)) == "undefined" ? <Skeleton className="h-6 w-24" /> : String(dashboardData?.monthlyTotal)}
         muted={loading ? <Skeleton className="h-4 w-32" /> : "From last month"} 
         percentage={5.2}
         // muted = "from last month"
+      /> */}
+      <Card
+        title="Monthly Spending"
+        icon={currencyOptions.find(c => c.value === currency)?.symbol ? <span className="text-4xl">{currencyOptions.find(c => c.value === currency)?.symbol}</span> : <IndianRupee />}
+        amount={
+          loading || !dashboardData
+            ? <Skeleton className="h-6 w-24" />
+            : `${convert(dashboardData.monthlyTotal).toFixed(0)}`
+        }
+        muted="From last month"
+        percentage={5.2}
       />
       <Card 
         title="Active Subscriptions"
-        icon={<CreditCard/>}
-        amount={ loading ||  String(dashboardData?.activeSubscriptions) == "undefined" ? <Skeleton className="h-6 w-24" />:String(dashboardData?.activeSubscriptions) }
-        muted="Average $10.65 each"
+        icon={<CreditCard />}
+        amount={
+          loading || !dashboardData
+            ? <Skeleton className="h-6 w-24" />
+            : String(dashboardData.activeSubscriptions)
+        }
+        muted="Average per subscription"
       />
       <Card 
         title="Top Category"
-        icon={<TrendingUp/>}
-        amount={ loading ||  String(dashboardData?.topCategory["category"]) == "undefined" ? <Skeleton className="h-6 w-24" />:String(dashboardData?.topCategory["category"])}
-        muted={dashboardData?.topCategory.monthly ? `$${dashboardData?.topCategory.monthly}/month` : <Skeleton className="h-4 w-32" />}
+        icon={<TrendingUp />}
+        amount={
+          loading || !dashboardData
+            ? <Skeleton className="h-6 w-24" />
+            : dashboardData.topCategory.category
+        }
+        muted={
+          loading || !dashboardData
+            ? <Skeleton className="h-4 w-32" />
+            : `${convert(dashboardData.topCategory.monthly).toFixed(2)}/month`
+        }
       />
-      <Card
-        title="Next Renewal"
-        icon={<CalendarClock/>}
-        amount={ loading ||  String(dashboardData?.upcomingRenewalsCount) == "undefined" ? <Skeleton className="h-6 w-24" />: String(dashboardData?.nearestRenewal.days.toFixed(0)) + " days"}
-        muted={dashboardData?.nearestRenewal !== null ?  dashboardData?.nearestRenewal.name ?  ` ${dashboardData?.nearestRenewal.name}- $${dashboardData?.nearestRenewal.amount}/month` : <Skeleton className="h-4 w-32" /> : "No renewal"}
-      />
+    <Card
+      title="Next Renewal"
+      icon={<CalendarClock />}
+      amount={
+        loading || !dashboardData
+          ? <Skeleton className="h-6 w-24" />
+          : `${dashboardData.nearestRenewal.days.toFixed(0)} days`
+      }
+      muted={
+        loading || !dashboardData
+          ? <Skeleton className="h-4 w-32" />
+          : dashboardData.nearestRenewal.name
+            ? `${dashboardData.nearestRenewal.name} - ${convert(
+                dashboardData.nearestRenewal.amount
+              ).toFixed(1)}/month`
+            : "No renewal"
+      }
+    />
       </div>
     // <div className="w-[25%] h-fit bg-card text-card-foreground border rounded-2xl py-3 px-5 shadow-sm">
     //   <div className="flex flex-row justify-between items-center mb-4 ">

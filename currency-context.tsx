@@ -3,9 +3,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { currencyOptions } from "@/data/currency-options";
 
+type ExchangeRates = Record<string, number>;
+
 type CurrencyContextType = {
   currency: string;
   setCurrency: (currency: string) => void;
+  exchangeRate: number;
+  convert: (amount: number) => number;
 };
 
 const CurrencyContext = createContext<CurrencyContextType | null>(null);
@@ -13,29 +17,28 @@ const CurrencyContext = createContext<CurrencyContextType | null>(null);
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const [currency, setCurrency] = useState(currencyOptions[0].value);
 
+  //rates have currencies with lowercase keys so you have to convert the caps to lower case while using it 
+  const [rates, setRates] = useState<ExchangeRates>({});
+
   useEffect(() => {
-    fetch("/api/user/currency")
-      .then((res) => (res.ok ? res.json() : null))
+    fetch("https://latest.currency-api.pages.dev/v1/currencies/inr.json")
+      .then((res) => res.json())
       .then((data) => {
-        if (data?.currency) setCurrency(data.currency);
+        if (data?.inr) setRates(data.inr);
       })
       .catch(() => {});
   }, []);
 
-  const changeCurrency = (newCurrency: string) => {
-    if (newCurrency === currency) return;
+  //convert exchange rate based on selected currency
+  const exchangeRate =
+    currency.toLocaleLowerCase() === "inr" ? 1 : rates[currency.toLocaleLowerCase()] ?? 1;
 
-    setCurrency(newCurrency);
-
-    fetch("/api/user/currency", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ currency: newCurrency }),
-    }).catch(() => {});
-  };
+  const convert = (amount: number) => amount * exchangeRate;
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency: changeCurrency }}>
+    <CurrencyContext.Provider
+      value={{ currency, setCurrency, exchangeRate, convert }}
+    >
       {children}
     </CurrencyContext.Provider>
   );
