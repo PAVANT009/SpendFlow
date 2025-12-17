@@ -34,7 +34,7 @@ export default function CategorytpCard(props : CardProps) {
           </div>
           </div>
         </div>
-        <div className='ml-auto text-muted-foreground '>
+        <div className='ml-auto text-muted-foreground text-3xl'>
           {props.loading ? <Skeleton className="h-9 w-11" /> :
             props.icon
           }

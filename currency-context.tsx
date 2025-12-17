@@ -33,7 +33,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const exchangeRate =
     currency.toLocaleLowerCase() === "inr" ? 1 : rates[currency.toLocaleLowerCase()] ?? 1;
 
-  const convert = (amount: number) => amount * exchangeRate;
+  const convert = (amount: number) => Number((amount * exchangeRate).toFixed(0));
 
   return (
     <CurrencyContext.Provider

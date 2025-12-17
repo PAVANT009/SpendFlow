@@ -5,6 +5,8 @@ import CategorytCard from '@/modules/categories/ui/components/CategorytpCard'
 import { Budget } from '@/types/Budget';
 import { useEffect, useState } from 'react'
 import {Folder,TrendingUp,DollarSign} from 'lucide-react';
+import { useCurrency } from '@/currency-context';
+import { currencyOptions } from '@/data/currency-options';
 const colorMap: Record<number, string> = {
   0: "bg-purple-500",
   1: "bg-green-500",
@@ -23,6 +25,7 @@ export default function Page() {
   }>(null);
 const [totalUsedBudget, setTotalUsedBudget] = useState(0);
 const [loading,setLoading] = useState(true);
+  const {convert,currency} = useCurrency();
 
   const refetch = async() => {
     const res1 = await fetch("api/budget");
@@ -58,7 +61,7 @@ const [loading,setLoading] = useState(true);
       <h1 className='text-sm ml-1 mb-6 font-light text-muted-foreground'>Organize your subscriptions and set budget limits for each category</h1>
       <div className='flex flex-row gap-14 mb-9 '>
         <CategorytCard loading={loading} icon={<Folder size={20}/>} title='Total categories' amount={cardtpData?.activeSubscriptions}/>
-        <CategorytCard loading={loading} icon={<DollarSign size={20}/>} title='Total Monthly Budget' amount={cardtpData?.monthlyTotal}/>
+        <CategorytCard loading={loading} icon={ currencyOptions.find(c => c.value === currency)?.symbol} title='Total Monthly Budget' amount={convert(cardtpData?.monthlyTotal ?? 0)}/>
         <CategorytCard loading={loading} icon={<TrendingUp size={20}/>} title='Budget Utilization' amount={`${((totalUsedBudget / totalMaxBudget) * 100).toFixed(0)}%`}/>
       </div>
       {/* <div className='h-[22%] w-full'></div> */}

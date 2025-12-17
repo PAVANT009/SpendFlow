@@ -17,6 +17,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useCurrency } from "@/currency-context"
+import { currencyOptions } from "@/data/currency-options"
 
 export const description = "A donut chart"
 
@@ -82,6 +84,8 @@ export function ChartPieDonut({ chartData }: { chartData: PieChartData[] }) {
 
   const total = chartData.reduce((sum, c) => sum + c.subscriptionCount, 0);
   console.log(chartConfig,chartData)
+    const { convert, currency } = useCurrency();
+  
 
   return (
     <Card className="h-[400px] border border-border">
@@ -108,7 +112,7 @@ export function ChartPieDonut({ chartData }: { chartData: PieChartData[] }) {
 
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 font-medium">
-          Total: ${total.toFixed(2)} / year
+          Total: {currencyOptions.find(c => c.value === currency)?.symbol} {convert(total)} / year
         </div>
         <div className="text-muted-foreground">Across {chartData.length} categories</div>
       </CardFooter>
