@@ -1,4 +1,6 @@
 // app/api/chat/stream/route.ts
+
+
 import OpenAI from "openai"
 import { eq } from "drizzle-orm";
 import { db } from "@/app/db";
@@ -6,7 +8,7 @@ import { messages } from "@/app/db/schema";
 import { NextResponse } from "next/server";
 import { auth } from "@/app/lib/auth";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 

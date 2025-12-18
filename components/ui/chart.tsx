@@ -3,7 +3,11 @@
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 
+import type { TooltipProps,   } from "recharts"
+
+
 import { cn } from "@/lib/utils"
+import { Payload } from "recharts/types/component/DefaultTooltipContent"
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
@@ -16,6 +20,19 @@ export type ChartConfig = {
     | { color?: string; theme?: never }
     | { color?: never; theme: Record<keyof typeof THEMES, string> }
   )
+}
+
+type ChartTooltipPayload = Payload<number, string> & {
+  payload: {
+    fill?: string
+    [key: string]: unknown
+  }
+}
+
+
+type ChartTooltipProps = TooltipProps<number, string> & {
+  label?: string | number
+  payload?: ChartTooltipPayload[]
 }
 
 type ChartContextProps = {
@@ -107,18 +124,18 @@ const ChartTooltip = RechartsPrimitive.Tooltip
 function ChartTooltipContent({
   active,
   payload,
+  label,
   className,
   indicator = "dot",
   hideLabel = false,
   hideIndicator = false,
-  label,
   labelFormatter,
   labelClassName,
   formatter,
   color,
   nameKey,
   labelKey,
-}: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
+}: ChartTooltipProps &
   React.ComponentProps<"div"> & {
     hideLabel?: boolean
     hideIndicator?: boolean
@@ -188,7 +205,7 @@ function ChartTooltipContent({
 
             return (
               <div
-                key={item.dataKey}
+                key={index}
                 className={cn(
                   "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
                   indicator === "dot" && "items-center"
