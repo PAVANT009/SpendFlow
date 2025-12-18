@@ -88,8 +88,10 @@ export default function NotificationArea({value}: {value: string}) {
             </div>
           )}
           {value == "recent" && (
-            <div>
-              Recent
+            <div className='flex flex-col gap-1 py-7  justify-center items-center'>
+              <Bell size={20} opacity={"0.3"}/>
+              <p className='text-muted-foreground '>No upcoming notifications scheduled</p>
+              <p className='text-muted-foreground text-sm'>Your notifications will appear here when they&apos;re ready</p>
             </div>
           )}
     </div>
