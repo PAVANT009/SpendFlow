@@ -19,6 +19,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { useEffect, useState, useMemo } from "react"
+import { useCurrency } from "@/currency-context"
+import { currencyOptions } from "@/data/currency-options"
 
 export const description = "A stacked bar chart with subscription categories"
 
@@ -98,6 +100,8 @@ export function ChartBarStacked() {
 
   console.log(transformedData);
 
+  const { convert, currency } = useCurrency();
+
   return (
     <Card className="w-[50%] border border-border">
       <CardHeader>
@@ -139,7 +143,8 @@ export function ChartBarStacked() {
               Most expensive: {barData?.highCat.category}
             </div>
             <div className="leading-none text-muted-foreground">
-              ${barData?.highCat.amount}/month
+              {currencyOptions.find(c => c.value === currency)?.symbol}
+              {convert(barData?.highCat.amount ?? 0)}/month
             </div>
           </>
         )}

@@ -107,13 +107,16 @@ useEffect(() => {
   fetchData();
 }, []);
 
+  const trend = useMemo<number | null>(() => {
+    if (chartData.length < 2) return null;
 
-const trend = (
-              (
-                (chartData[chartData.length - 1]?.total - chartData[chartData.length - 2]?.total) / 
-                chartData[chartData.length - 2]?.total ) * 100
-                  ).toFixed(0) 
+    const prev = chartData[chartData.length - 2].total;
+    const curr = chartData[chartData.length - 1].total;
 
+    if (prev === 0) return null;
+
+    return Math.round(((curr - prev) / prev) * 100);
+  }, [chartData]);
 
   return (
     <Card>
@@ -156,7 +159,7 @@ const trend = (
 <div className="flex w-full items-start gap-2 text-sm">
   <div className="grid gap-2">
     <div className="flex items-center gap-2 leading-none font-medium">
-    {parseInt(trend) > 0 ? (
+    {/* {parseInt(trend) > 0 ? (
       <div className="flex flex-row gap-1 items-center">
         <div className="flex flex-row gap-1 items-center">
           <span>Trending</span>
@@ -180,7 +183,22 @@ const trend = (
         <span>this month</span>
         <TrendingDown className="h-4 w-4" />
       </div>
+    )} */}
+    {trend !== null && (
+  <div className="flex items-center gap-2 font-medium leading-none">
+    <span>Trending</span>
+    <span className={trend >= 0 ? "text-green-600" : "text-red-600"}>
+      {Math.abs(trend)}%
+    </span>
+    <span>{trend >= 0 ? "up" : "down"} this month</span>
+    {trend >= 0 ? (
+      <TrendingUp className="h-4 w-4" />
+    ) : (
+      <TrendingDown className="h-4 w-4" />
     )}
+  </div>
+)}
+
 
     </div>
     <div className="text-muted-foreground">Last Year</div>

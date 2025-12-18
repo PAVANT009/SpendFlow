@@ -4,6 +4,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Budget } from "@/types/Budget";
 import React, { useEffect, useRef, useState } from "react";
 import { CategoryActions } from "./CategoryActions";
+import { useCurrency } from "@/currency-context";
+import { currencyOptions } from "@/data/currency-options";
 
 interface Categorystat {
   category: string;
@@ -66,6 +68,7 @@ export default function CategoryCard({
   }, [categoryData.category]);
 
   const loading = !data; 
+  const {convert, currency} = useCurrency()
 
   return (
     <div className="w-full h-44 bg-card text-card-foreground border border-border rounded-2xl py-3 px-5 shadow-sm">
@@ -95,14 +98,14 @@ export default function CategoryCard({
       <div className="flex flex-row justify-between">
         <p className="text-muted-foreground font-light">Spent this month</p>
         <h1 className="text-foreground text-sm font-medium">
-          {loading ? <Skeleton className="h-4 w-12" /> : `$${data?.totalMonthly}`}
+          {loading ? <Skeleton className="h-4 w-12" /> : `${currencyOptions.find(c => c.value === currency)?.symbol} ${convert(data?.totalMonthly ?? 0)}`}
         </h1>
       </div>
 
       <div className="flex flex-row justify-between mt-1">
         <p className="text-muted-foreground font-light">Monthly Budget</p>
         <h1 className="text-foreground text-sm font-medium">
-          {loading ? <Skeleton className="h-4 w-12" /> : `$${categoryData.maxBudget}`}
+          {loading ? <Skeleton className="h-4 w-12" /> : `${currencyOptions.find(c => c.value === currency)?.symbol} ${convert(categoryData.maxBudget)}`}
         </h1>
       </div>
 
