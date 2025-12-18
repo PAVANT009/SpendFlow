@@ -59,13 +59,13 @@ const [loading,setLoading] = useState(true);
     <div className='bg-background h-screen w-full px-12 py-3'>
       <p className='text-3xl ml-1 mb-1 font-semibold'>Categories</p>
       <h1 className='text-sm ml-1 mb-6 font-light text-muted-foreground'>Organize your subscriptions and set budget limits for each category</h1>
-      <div className='flex flex-row gap-14 mb-9 '>
+      <div className='flex sm:flex-row flex-col gap-14 mb-9 '>
         <CategorytCard loading={loading} icon={<Folder size={20}/>} title='Total categories' amount={cardtpData?.activeSubscriptions}/>
         <CategorytCard loading={loading} icon={ currencyOptions.find(c => c.value === currency)?.symbol} title='Total Monthly Budget' amount={convert(cardtpData?.monthlyTotal ?? 0)}/>
         <CategorytCard loading={loading} icon={<TrendingUp size={20}/>} title='Budget Utilization' amount={`${((totalUsedBudget / totalMaxBudget) * 100).toFixed(0)}%`}/>
       </div>
       {/* <div className='h-[22%] w-full'></div> */}
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid sm:grid-cols-3 grid-rows-1 gap-8">
         {categoryData?.map((item,index) =>{ 
           return (
             <CategoryCard

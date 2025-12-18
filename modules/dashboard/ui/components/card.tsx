@@ -11,7 +11,7 @@ export interface CardProps {
 
 export default function Card(props : CardProps) {
   return (
-    <div className="w-[25%] h-fit bg-card text-card-foreground border rounded-2xl py-5 px-5 shadow-sm">
+    <div className="sm:w-[250px] w-[250px] h-[150px] bg-card text-card-foreground border rounded-2xl py-5 px-5 shadow-sm">
       <div className="flex flex-row justify-between items-center mb-4 ">
         <h1 className="text-muted-foreground">{props.title}</h1>
         <p className="text-foreground ">{props.icon}</p>

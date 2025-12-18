@@ -54,7 +54,7 @@ useEffect(() => {
 
 
   return (
-    <div className="flex flex-row gap-7 mx-5 mb-6">
+      <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-7 mx-5 mb-6">
       {/* <Card
         title="Monthly Spending"
         icon={<IndianRupee/>}

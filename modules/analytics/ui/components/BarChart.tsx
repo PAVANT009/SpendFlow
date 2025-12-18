@@ -103,7 +103,7 @@ export function ChartBarStacked() {
   const { convert, currency } = useCurrency();
 
   return (
-    <Card className="w-[50%] border border-border">
+    <Card className="w-full md:w-[450px] border border-border">
       <CardHeader>
         <CardTitle>Subscription Categories by Month</CardTitle>
         <CardDescription>Showing subscription distribution across categories</CardDescription>

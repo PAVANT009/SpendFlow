@@ -66,7 +66,7 @@ export default function Page() {
       <div >
         <ChartAreaDefault/>
       </div>
-      <div className="flex flex-row mt-4 justify-between">
+      <div className="flex sm:flex-row flex-col gap-1.5 mt-4 justify-between">
         <ChartPieDonut chartData = {chartData}/>
         <ChartBarStacked/>
       </div>
