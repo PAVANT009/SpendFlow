@@ -11,8 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CurrencySelect } from "./currency-select";
 import { useEffect } from "react";
+import { currencyOptions } from "@/data/currency-options";
 
 function formatDate(d: Date) {
   return d.toISOString().split("T")[0];
@@ -41,6 +41,7 @@ export default function MyForm({ onSubmit, submitting = false, initialValues, pr
       cycleType: initialValues?.cycleType ?? "month",
       cycleCount: initialValues?.cycleCount ?? 1,
       logo_url: initialValues?.logo_url ?? "",
+      currency: "INR",
       ...initialValues,
       startBilling: initialValues?.startBilling
     ? formatDate(new Date(initialValues.startBilling))
@@ -224,15 +225,16 @@ export default function MyForm({ onSubmit, submitting = false, initialValues, pr
           control={control}
           name="currency"
           rules={{ required: "Currency is required" }}
-          render={({ }) => (
-            <button className="cursor-not-allowed">
-            <CurrencySelect/>
-            </button>
+          render={() => (
+            <div
+              className="cursor-not-allowed opacity-60 border border-input px-2 py-2 rounded w-full text-sm outline-none bg-muted/50 flex items-center "
+              title="Currency cannot be changed"
+            >
+              {/* <CurrencySelect disabled /> */}
+              {currencyOptions[0].symbol} {currencyOptions[0].value}
+            </div>
           )}
         />
-        {errors.currency && (
-          <p className="text-red-500 text-xs mt-1">{errors.currency.message}</p>
-        )}
           </div>
       </div>
 

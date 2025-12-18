@@ -44,7 +44,10 @@ export default function AddSubscription({ onSubscriptionAdded }: AddSubscription
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(subscriptionData),
+        body: JSON.stringify({
+          ...subscriptionData,
+          state: true
+        }),
       });
   
       const responseData = await res.json();

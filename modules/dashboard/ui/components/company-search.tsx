@@ -101,7 +101,7 @@ export default function CompanySearch({ handleSubmit, onSelect }: CompanySearchP
               >
                 {suggestions.map((s) => (
                   <div
-                    key={s.id}
+                    key={s.domain}
                     className="px-5 py-2.5 flex flex-row gap-3 items-center hover:bg-primary cursor-pointer hover:rounded-md"
                     onClick={() => {
                       skipSearchRef.current = true; // block effect refresh
