@@ -14,7 +14,7 @@ export interface CardProps {
 
 export default function CategorytpCard(props : CardProps) {
   return (
-    <div className="w-[250px]  h-28 bg-card text-card-foreground border border-border rounded-2xl py-3 px-5 shadow-sm">
+    <div className="w-[320px]  h-28 bg-card text-card-foreground border border-border rounded-2xl py-3 px-5 shadow-sm">
       <div className='flex flex-row'>
         <div className="flex flex-row  items-center gap-3">
           <div className='flex justify-start flex-col'>

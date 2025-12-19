@@ -6,6 +6,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { PanelLeftIcon, PanelRightIcon, SearchIcon } from "lucide-react";
 import { ModeToggleBtn } from "@/components/theme-button";
 import { CurrencySelect } from "@/modules/dashboard/ui/components/currency-select";
+import { DashboardCommand } from "@/modules/dashboard/ui/components/dashboard-command";
 
 export const PageNavbar = () => {
   const { state, toggleSidebar, isMobile } = useSidebar();
@@ -24,6 +25,8 @@ export const PageNavbar = () => {
   }, []);
 
   return (
+    <>
+    <DashboardCommand open={commandOpen} setOpen={setCommandOpen}/>
     <nav className="flex px-4 items-center py-3 border-b bg-background w-full justify-between">  <Button className="size-9" variant="outline" onClick={toggleSidebar}>
         {state === "collapsed" || isMobile ? (
           <PanelLeftIcon className="size-4" />
@@ -33,22 +36,23 @@ export const PageNavbar = () => {
       </Button>
 
       <Button
-        className="h-9 font-normal w-[240px] text-muted-foreground"
-        variant="outline"
-        size="sm"
-        onClick={() => setCommandOpen((open) => !open)}
-      >
-        <SearchIcon />
-        Search
-        <kbd className="ml-auto inline-flex h-5 items-center rounded border bg-muted px-1.5 text-[10px]">
-          ⌘k
-        </kbd>
-      </Button>
+                className="h-9 w-[240px] justify-start font-normal text-muted-foreground hover:text-muted-foreground" 
+                variant={"outline"}
+                size={"sm"}
+                onClick={() => setCommandOpen((open) => !open)}
+            >
+                <SearchIcon/>
+                Search
+                <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+                    <span>&#8984;</span>k
+                </kbd>
+            </Button>
 
       <div className="flex flex-row justify-end gap-x-2">
         <CurrencySelect />
         <ModeToggleBtn />
       </div>
     </nav>
+    </>
   );
 };
