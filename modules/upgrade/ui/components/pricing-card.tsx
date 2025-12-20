@@ -57,7 +57,7 @@ interface Props extends VariantProps<typeof pricingCardVariants> {
   features: string[];
   title: string;
   description?: string | null;
-  priceSuffix: string;
+  priceSuffix?: string;
   className?: string;
   buttonText: string;
   onClick: () => void;
