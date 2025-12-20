@@ -4,7 +4,6 @@ import ChatComponent from "@/modules/agent/ui/components/Chat";
 import { BotMessageSquare, GemIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { authClient } from "../lib/auth-clent";
-import { polarClient } from "../lib/polar";
 
 export default function Page() {
     const [conversationId, setConversationId] = useState<string>("");

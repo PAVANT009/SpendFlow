@@ -10,12 +10,40 @@ interface Props {
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const pages = [
-  { label: "Meetings", href: "/meetings" },
-  { label: "Agents", href: "/agents" },
-  { label: "Reports", href: "/reports" },
-  { label: "Settings", href: "/settings" },
-];
+
+ const pages = [
+    {
+        label: "Dashboard",
+        href: "/",
+    },
+    {
+        label: "AI Agent",
+        href: '/agent',
+    },
+    {
+        label: "Categories",
+        href: "/categories",
+    },
+    {
+        label: "Analytics",
+    },
+    {
+        label: "Notifications",
+        href: "/notifications",
+    },
+    {
+        label: "Upgrade",
+        href: "/upgrade",
+    },
+]
+
+
+// const pages = [
+//   { label: "Meetings", href: "/meetings" },
+//   { label: "Agents", href: "/agents" },
+//   { label: "Reports", href: "/reports" },
+//   { label: "Settings", href: "/settings" },
+// ];
 
 function fuzzyMatch(text: string, query: string) {
   const t = text.toLowerCase();
@@ -78,7 +106,7 @@ const filteredPages = useMemo(() => {
               className="h-12"
               key={page.href}
               onSelect={() => {
-                router.push(page.href);
+                router.push(page.href!);
                 setOpen(false);
               }}
             >
@@ -94,7 +122,7 @@ const filteredPages = useMemo(() => {
                     </CommandEmpty>
                     {subs.map((sub) => (
                         <CommandItem 
-                            onSelect={() => {router.push(`/agents/${sub.id}`)
+                            onSelect={() => {router.push(`/agent/${sub.name}`)
                             setOpen(false);
                             }}
                             key={sub.id}
