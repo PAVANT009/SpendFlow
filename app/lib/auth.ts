@@ -11,6 +11,7 @@ export const auth = betterAuth({
     polar({
   client: polarClient,
 
+    createCustomerOnSignUp: true,
   customerCreate: ({ user } :{ user: User }) => ({
     email: user.email!,        
     name: user.name ?? user.email!,
