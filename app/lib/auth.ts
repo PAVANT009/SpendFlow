@@ -1,5 +1,6 @@
+// lib/auth.ts
 import "server-only";
-import { betterAuth, User } from "better-auth";
+import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/app/db";
 import * as schema from "@/app/db/schema";
@@ -9,26 +10,16 @@ import { polarClient } from "./polar";
 export const auth = betterAuth({
   plugins: [
     polar({
-  client: polarClient,
-
-    createCustomerOnSignUp: true,
-  customerCreate: ({ user } :{ user: User }) => ({
-    email: user.email!,        
-    name: user.name ?? user.email!,
-    metadata: {
-      userId: user.id,
-    },
-  }),
-
-  use: [
-    checkout({
-      authenticatedUsersOnly: true,
-      successUrl: "/upgrade",
+      client: polarClient,
+      createCustomerOnSignUp: true,
+      use: [
+        checkout({
+          authenticatedUsersOnly: true,
+          successUrl: "/upgrade",
+        }),
+        portal(),
+      ],
     }),
-    portal(),
-  ],
-}),
-
   ],
   socialProviders: {
     github: {
@@ -50,8 +41,6 @@ export const auth = betterAuth({
     },
   }),
 });
-
-
 
 // import "server-only";
 // import { betterAuth } from "better-auth";
