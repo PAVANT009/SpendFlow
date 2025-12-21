@@ -1,5 +1,5 @@
 import "server-only";
-import { betterAuth } from "better-auth";
+import { betterAuth, User } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/app/db";
 import * as schema from "@/app/db/schema";
@@ -11,7 +11,7 @@ export const auth = betterAuth({
     polar({
   client: polarClient,
 
-  customerCreate: ({ user }) => ({
+  customerCreate: ({ user } :{ user: User }) => ({
     email: user.email!,        
     name: user.name ?? user.email!,
     metadata: {
