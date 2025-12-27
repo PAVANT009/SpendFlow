@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -17,7 +17,8 @@ import {
     SidebarMenuItem,
     SidebarMenuButton
  } from "@/components/ui/sidebar";
-import {  StarIcon, BellIcon,LayoutDashboard, Layers, ChartPie, BotMessageSquare  } from "lucide-react";
+import {  StarIcon, BellIcon,LayoutDashboard, Layers, ChartPie, BotMessageSquare, LogOutIcon  } from "lucide-react";
+import { authClient } from "@/app/lib/auth-clent";
 
 // import { DashboardUserButton } from "./dashboard-user-button";
 // import { DashboardTrail } from "./dashboard-trail";
@@ -57,8 +58,22 @@ import {  StarIcon, BellIcon,LayoutDashboard, Layers, ChartPie, BotMessageSquare
         icon: StarIcon
     },
 ]
-
+    const footerSectionn= [
+        {
+            label: "Logout",
+            icon: LogOutIcon
+        }
+    ]
 export const PageSidebar = () => {
+
+    const router = useRouter();
+    const hangleSignOut = async () => {
+
+        await authClient.signOut();
+        router.push("/sign-in");
+        router.refresh();
+    }
+
     const pathname = usePathname();
     return (
         <Sidebar className="bg-sidebar">
@@ -133,6 +148,30 @@ export const PageSidebar = () => {
             <SidebarFooter className="text-white">
                     {/* <DashboardTrail /> */}
                     {/* <DashboardUserButton/> */}
+                    {
+                        footerSectionn.map((item) => {
+                            return (<SidebarMenuItem key={item.label}>
+                                <SidebarMenuButton
+                                // onClick={() => authClient.signOut()}
+                                onClick={hangleSignOut}
+                                asChild
+                                className="h-10 hover:bg-linear-to-r/oklch 
+                                                    border border-transparent 
+                                                    hover:border-[#5D6B68]/10
+                                                    data-[active=true]:bg-primary
+                                                    data-[active=true]:text-white
+                                                    data-[active=true]:border-[#5D6B68]/10"
+                                >
+                                    <Link href={"/"} className=" flex items-center">
+                                        <item.icon className="text-foreground w-5 h-5" />
+                                        <span className=" p-4 text-sm font-medium tracking-tight">
+                                            {item.label}
+                                        </span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>)
+                        })
+                    }
             </SidebarFooter>
         </Sidebar>
     )

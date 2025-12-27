@@ -78,3 +78,19 @@ export async function GET(req: Request) {
     )
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await auth.api.getSession({ headers: req.headers });
+    if(!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = session.user.id;
+
+    db.delete(subscription).where(eq(subscription.userId, userId));
+  }
+  catch (error) {
+    return NextResponse.json({ error: `Failed to delete,error: ${error}` }, { status: 500 });
+  }
+}
