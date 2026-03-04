@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
+
 const pricingCardVariants = cva("rounded-lg p-4 py-6 w-full", {
   variants: {
     variant: {
@@ -61,6 +62,7 @@ interface Props extends VariantProps<typeof pricingCardVariants> {
   className?: string;
   buttonText: string;
   onClick: () => void;
+  landing?:boolean;
 }
 
 export const PricingCard = ({
@@ -74,13 +76,14 @@ export const PricingCard = ({
   className,
   buttonText,
   onClick,
+  landing
 }: Props) => {
   return (
     <div
       className={cn(
         pricingCardVariants({ variant }),
         className,
-        "border h-[70vh]"
+        "border min-h-[70vh] "
       )}
     >
       <div className="flex items-end gap-x-4 justify-between">
@@ -122,7 +125,7 @@ export const PricingCard = ({
       </div>
 
       <Button
-        className="w-full"
+        className= {cn( "w-full",landing && "dark:bg-primary bg-primary")}
         size="lg"
         variant={variant === "highlighted" ? "default" : "outline"}
         onClick={onClick}
@@ -135,13 +138,17 @@ export const PricingCard = ({
         <ul
           className={cn(
             "flex flex-col gap-y-2.5",
-            pricingCardSecondaryTextVariants({ variant })
+            pricingCardSecondaryTextVariants({ variant }),
+            landing && pricingCardSecondaryTextVariants({  variant:"highlighted" })
           )}
         >
           {features?.map((feature, index) => (
             <li key={index} className="flex items-center gap-x-2.5">
               <CircleCheckIcon
-                className={cn(pricingCardIconVariants({ variant }))}
+                className={cn(
+                  pricingCardIconVariants({ variant }),
+                  landing && pricingCardIconVariants({ variant:"default" })
+                )}
               />
               {feature}
             </li>
