@@ -8,10 +8,10 @@ import { cn } from '@/lib/utils'
 import Image from 'next/image'
 
 const menuItems = [
-    { name: 'Features', href: '#link' },
-    { name: 'Solution', href: '#link' },
-    { name: 'Pricing', href: '#link' },
-    { name: 'About', href: '#link' },
+    { name: 'Features', href: '#features' },
+    { name: 'Solution', href: '#solution' },
+    { name: 'Pricing', href: '#pricing' },
+    { name: 'Faq', href: '#faq' },
 ]
 
 export const HeroHeader = () => {
@@ -22,6 +22,7 @@ export const HeroHeader = () => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50)
         }
+        handleScroll()
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
@@ -53,6 +54,7 @@ export const HeroHeader = () => {
                                     <li key={index}>
                                         <Link
                                             href={item.href}
+                                            onClick={() => setMenuState(false)}
                                             className="text-muted-foreground hover:text-accent-foreground block duration-150">
                                             <span>{item.name}</span>
                                         </Link>
@@ -68,6 +70,7 @@ export const HeroHeader = () => {
                                         <li key={index}>
                                             <Link
                                                 href={item.href}
+                                                onClick={() => setMenuState(false)}
                                                 className="text-muted-foreground hover:text-accent-foreground block duration-150">
                                                 <span>{item.name}</span>
                                             </Link>

@@ -27,7 +27,7 @@ export default function Solution() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-row justify-between items-center mx-10 my-14">
+    <div id="solution" className="scroll-mt-28 min-h-screen flex flex-row justify-between items-center mx-10 my-14">
       <div className="w-1/2">
         <div className="mb-5">
           <div className="text-3xl font-medium flex flex-col gap-2.5">
@@ -68,32 +68,59 @@ export default function Solution() {
             analysis_mode: active
           </div>
         </div>
+        <div className="w-full rounded-2xl  bg-gradient-to-br from-card via-card to-primary/10 p-4 shadow-xl shadow-primary/20">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="absolute -inset-1 rounded-xl bg-primary/25 blur-md" />
+                <Image
+                  src="https://img.logo.dev/netflix.com?token=pk_bwnOPNY5QAOypvol-QLeqQ"
+                  alt="Netflix"
+                  width={52}
+                  height={52}
+                  className="relative rounded-xl border border-white/15"
+                />
+              </div>
 
-        <div className="flex flex-col gap-4">
-          <div className="text-lg font-semibold">
-            🔓 You just unlocked ₹3,600 in savings
-          </div>
-          <div className="flex items-center gap-3 pt-2">
-            <Image
-              src="https://img.logo.dev/netflix.com?token=pk_bwnOPNY5QAOypvol-QLeqQ"
-              alt="Product"
-              width={35}
-              height={35}
-              className="rounded-md"
-            />
-            <div className="text-sm text-muted-foreground">Netflix Annual Plan</div>
+              <div>
+                <p className="text-2xl font-semibold leading-none text-foreground">
+                  Netflix
+                </p>
+                <p className="mt-1 text-xs tracking-[0.18em] text-muted-foreground uppercase">
+                  Subscription
+                </p>
+              </div>
+            </div>
+
+            <span className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
+              Save 30%
+            </span>
           </div>
 
-          <div className="text-sm text-muted-foreground space-y-1 ml-7">
-            <p className="line-through">{"\u20B9"}999 / month</p>
-            <p className="text-foreground font-medium">
-              {"\u20B9"}699 / month (billed yearly)
-            </p>
-            <p className="text-green-500 font-medium">30% reduction</p>
-          </div>
+          <div className="mt-4 rounded-xl border border-border/70 bg-background/55 p-3 backdrop-blur-sm">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Current plan</p>
+                <p className="text-xl font-semibold text-foreground">
+                  &#8377;699
+                  <span className="ml-1 text-xs font-normal text-muted-foreground">
+                    / month
+                  </span>
+                </p>
+              </div>
 
+              <div className="text-right">
+                <p className="text-[11px] text-muted-foreground">Was</p>
+                <p className="text-sm font-medium text-muted-foreground line-through">
+                  &#8377;999 / month
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+

@@ -5,10 +5,8 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { TextEffect } from '@/components/ui/text-effect'
 import { AnimatedGroup } from '@/components/ui/animated-group'
-import { HeroHeader } from './header'
 import NightSky from "@/public/night-background.webp" 
 import App from '@/public/app.png'
-import PricingSection from './pricing-section'
 
 const transitionVariants = {
     item: {
@@ -30,11 +28,16 @@ const transitionVariants = {
     },
 }
 
+const impactStats = [
+    { value: "INR 12L+", label: "Total Money Saved" },
+    // { value: "INR 1,450", label: "Avg Monthly Savings per User" },
+    { value: "18%", label: "Avg Spend Reduction" },
+    { value: "2.5K+", label: "Active Users" },
+]
+
 export default function HeroSection() {
     return (
-        <>
-            <HeroHeader />
-            <main className="overflow-hidden">
+        <main className="overflow-hidden">
                 <div
                     aria-hidden
                     className="absolute inset-0 isolate hidden opacity-65 contain-strict lg:block">
@@ -42,7 +45,7 @@ export default function HeroSection() {
                     <div className="h-320 absolute left-0 top-0 w-60 -rotate-45 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.06)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)] [translate:5%_-50%]" />
                     <div className="h-320 -translate-y-87.5 absolute left-0 top-0 w-60 -rotate-45 bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.04)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)]" />
                 </div>
-                <section>
+                <section  className="scroll-mt-28">
                     <div className="relative pt-24 md:pt-36">
                         <AnimatedGroup
                             variants={{
@@ -88,9 +91,9 @@ export default function HeroSection() {
                             <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                                 <AnimatedGroup variants={transitionVariants}>
                                     <Link
-                                        href="#link"
+                                        href="/sign-in"
                                         className="hover:bg-background dark:hover:border-t-border bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4 shadow-md shadow-zinc-950/5 transition-colors duration-300 dark:border-t-white/5 dark:shadow-zinc-950">
-                                        <span className="text-foreground text-sm">Introducing Support for AI Models</span>
+                                        <span className="text-foreground text-sm">Smart Budget Insights Are Live</span>
                                         <span className="dark:border-background block h-4 w-0.5 border-l bg-white dark:bg-zinc-700"></span>
 
                                         <div className="bg-background group-hover:bg-muted size-6 overflow-hidden rounded-full duration-500">
@@ -111,7 +114,8 @@ export default function HeroSection() {
                                     speedSegment={0.3}
                                     as="h1"
                                     className="mx-auto mt-8 max-w-4xl text-balance text-5xl max-md:font-semibold md:text-7xl lg:mt-16 xl:text-[5.25rem]">
-                                    Modern Solutions for Customer Engagement
+                                    {/* Modern Solutions for Customer Engagement */}
+                                    Track Every Rupee. Save More Every Month.
                                 </TextEffect>
                                 <TextEffect
                                     per="line"
@@ -120,7 +124,8 @@ export default function HeroSection() {
                                     delay={0.5}
                                     as="p"
                                     className="mx-auto mt-8 max-w-2xl text-balance text-lg">
-                                    Highly customizable components for building modern websites and applications that look and feel the way you mean it.
+                                    {/* Highly customizable components for building modern websites and applications that look and feel the way you mean it. */}
+                                     SpendFlow uses AI to auto-categorize expenses, optimize budgets, and send real-time alerts so you can control spending without manual tracking.
                                 </TextEffect>
 
                                 <AnimatedGroup
@@ -143,8 +148,8 @@ export default function HeroSection() {
                                             asChild
                                             size="lg"
                                             className="rounded-xl px-5 text-base">
-                                            <Link href="#link">
-                                                <span className="text-nowrap">Start Building</span>
+                                            <Link href="/sign-in">
+                                                <span className="text-nowrap">Start Tracking Free</span>
                                             </Link>
                                         </Button>
                                     </div>
@@ -154,8 +159,8 @@ export default function HeroSection() {
                                         size="lg"
                                         variant="ghost"
                                         className="h-10.5 rounded-xl px-5">
-                                        <Link href="#link">
-                                            <span className="text-nowrap">Request a demo</span>
+                                        <Link href="#pricing">
+                                            <span className="text-nowrap">View Pricing</span>
                                         </Link>
                                     </Button>
                                 </AnimatedGroup>
@@ -174,7 +179,7 @@ export default function HeroSection() {
                                 },
                                 ...transitionVariants,
                             }}>
-                            <div className="mask-b-from-55% relative -mr-56 mt-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20">
+                            <div id="features" className="mask-b-from-55% relative -mr-56 mt-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20">
                                 <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
                                     <Image
                                         className="bg-background  relative hidden rounded-2xl dark:block"
@@ -195,19 +200,31 @@ export default function HeroSection() {
                         </AnimatedGroup>
                     </div>
                 </section>
-                <section className="bg-background pb-16 pt-16 md:pb-32">
-                    <div className="group relative m-auto max-w-5xl px-6">
+                <section className="pb-16 pt-16 md:pb-32 bg-background">
+                    <div className="group relative m-auto w-full px-6 ">
                         <div className="absolute inset-0 z-10 flex scale-95 items-center justify-center opacity-0 duration-500 group-hover:scale-100 group-hover:opacity-100">
                             <Link
-                                href="/"
+                                href="#pricing"
                                 className="block text-sm duration-150 hover:opacity-75">
-                                <span> Meet Our Customers</span>
+                                <span>See the pricing</span>
 
                                 <ChevronRight className="ml-1 inline-block size-3" />
                             </Link>
                         </div>
-                        <div className="group-hover:blur-xs mx-auto mt-12 grid max-w-2xl grid-cols-4 gap-x-12 gap-y-8 transition-all duration-500 group-hover:opacity-50 sm:gap-x-16 sm:gap-y-14">
-                            <div className="flex">
+                        <div className="group-hover:blur-xs mx-auto mt-12 grid w-full max-w-5xl grid-cols-1 justify-items-center gap-x-4 gap-y-4 transition-all duration-500 group-hover:opacity-50 sm:grid-cols-2 lg:grid-cols-3 sm:gap-x-8 sm:gap-y-8 ">
+                            {impactStats.map((stat) => (
+                                <div
+                                    key={stat.label}
+                                    className="w-full px-4 py-5 text-center shadow-sm backdrop-blur-sm ">
+                                    <p className="text-2xl font-semibold text-foreground text-nowrap">
+                                        {stat.label}
+                                    </p>
+                                    <p className="text-xs font-medium text-muted-foreground text-nowrap">
+                                        {stat.value}
+                                    </p>
+                                </div>
+                            ))}
+                            {/* <div className="flex">
                                 <img
                                     className="mx-auto h-5 w-fit dark:invert"
                                     src="https://html.tailus.io/blocks/customers/nvidia.svg"
@@ -280,12 +297,10 @@ export default function HeroSection() {
                                     height="24"
                                     width="auto"
                                 />
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </section>
-                <PricingSection/>
             </main>
-        </>
     )
 }
