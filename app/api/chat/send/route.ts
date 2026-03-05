@@ -37,7 +37,6 @@ export async function GET(req: Request) {
     content
   );
 
-  // Save user message
   console.log("[DB] Saving user message:", content);
   await db.insert(messages).values({
     userId: userId,

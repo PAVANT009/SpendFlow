@@ -17,7 +17,6 @@ const CurrencyContext = createContext<CurrencyContextType | null>(null);
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const [currency, setCurrency] = useState(currencyOptions[0].value);
 
-  //rates have currencies with lowercase keys so you have to convert the caps to lower case while using it 
   const [rates, setRates] = useState<ExchangeRates>({});
 
   useEffect(() => {
@@ -29,7 +28,6 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       .catch(() => {});
   }, []);
 
-  //convert exchange rate based on selected currency
   const exchangeRate =
     currency.toLocaleLowerCase() === "inr" ? 1 : rates[currency.toLocaleLowerCase()] ?? 1;
 

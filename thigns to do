@@ -1,0 +1,32 @@
+Based on your current stack (`Next 16`, `React 19`, `Drizzle + Postgres`, `OpenAI`, `@google/generative-ai`), this is what I’d use.
+
+Recommended Notification Stack
+1. `inngest` for scheduled/background jobs (reminders, retries, digests).
+2. `resend` + `@react-email/components` for email notifications.
+3. `web-push` for browser push (optional but great for portfolio).
+4. Keep your existing `notification` table, but add fields: `type`, `channel`, `status`, `scheduledFor`, `sentAt`, `actionUrl`.
+
+Why: this gives you production-style async workflow + multi-channel delivery, which looks strong in portfolio projects.
+
+Recommended Chatbot Upgrade Stack
+1. Keep `openai` as primary for tool-calling reliability.
+2. Use `@google/generative-ai` as fallback/cheap model routing (showcase “multi-model orchestration”).
+3. Add `zod`-validated tool schemas (you already use `zod`) to harden tool inputs.
+4. Add retrieval from user data (subscriptions/budgets) before model call for personalized answers.
+5. Add `ai` SDK (`@ai-sdk/openai`) only if you want cleaner streaming + UI primitives; optional.
+
+What to improve in your current chatbot (high impact)
+1. Switch chat send endpoint from `GET` query params to `POST` body.
+2. Send conversation history from DB, not only latest message.
+3. Add tool-execution guardrails: max amount, category enum check, currency normalization.
+4. Store tool call logs + latency + token usage (portfolio-ready observability).
+5. Add “actionable responses”: assistant suggests and can create budget/subscription with confirmation.
+
+Trendy portfolio topics to highlight
+1. Multi-agent pattern: `Planner -> Tool Executor -> Verifier`.
+2. Multi-model routing: OpenAI + Gemini fallback with cost/perf logic.
+3. AI observability: trace IDs, tool success rate, avg latency.
+4. Event-driven architecture: Inngest workflows + retries + dead-letter handling.
+5. User personalization/RAG over financial records.
+
+If you want, I can next give you an exact implementation blueprint (DB schema changes + API routes + package install commands) for your current codebase.

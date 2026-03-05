@@ -30,7 +30,6 @@ export default function AlertSection() {
   const [highestSubscription, setHighestSubscription] = useState<HighestSubData | null>(null);
   const [topCategory, setTopCategory] = useState<{ category: string; count: number } | null>(null);
 
-  // FIX: state should be string only
   const [insight, setInsight] = useState<string>("Loading AI insights...");
 
   useEffect(() => {
