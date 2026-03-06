@@ -84,7 +84,7 @@ export default function ChatComponent({
   return (
     <div>
       {(!convo || convo.length === 0) && (input.length === 0) ? (
-        <div className="flex flex-col gap-2.5 px-4 py-3 mx-4 my-4 rounded-2xl">
+        <div className="flex flex-col gap-2.5 px-4 py-3 mx-4 my-4 rounded-2xl bg-muted">
           <div className="bg-background rounded-2xl px-4 py-4 gap-1.5 ">
             <p
               onClick={() => setInput("How much did I spend last month compared to this month?")}

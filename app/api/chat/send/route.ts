@@ -13,6 +13,7 @@ export async function GET(req: Request) {
   const conversationId = searchParams.get("conversationId");
   const content = searchParams.get("content");
 
+  
   if (!conversationId || !content) {
     console.error("[Request] Missing conversationId or content");
     return new Response("Missing conversationId or content", { status: 400 });
@@ -28,6 +29,11 @@ export async function GET(req: Request) {
   }
 
   const userId = String(session.user.id);
+
+  
+  const subs = await db.query.subscription.findMany({
+      where: (fields, { eq }) => eq(fields.userId, userId),
+    });
   console.log(
     "[Request] conversationId:",
     conversationId,
@@ -58,7 +64,18 @@ export async function GET(req: Request) {
         model: "gpt-4o-mini",
         stream: true,
         messages: [
-          { role: "system", content: "You are a helpful assistant. and use only this  categories: Entertainment Productivity Health & Fitness Development Cloud Learning" },
+          { role: "system", content: `You are a helpful financial assistant for SpendFlow. Use only these categories: Entertainment, Productivity, Health & Fitness, Development, Cloud, Learning.
+          Here are the user's current subscriptions:
+          ${subs.length > 0 ? JSON.stringify(subs.map(s => ({
+            name: s.name,
+            amount: s.amount,
+            currency: s.currency,
+            category: s.category,
+            cycleType: s.cycleType,
+            cycleCount: s.cycleCount,
+          })), null, 2) : "No subscriptions yet."}
+
+          Use this data to answer questions about their spending, subscriptions, and finances.` },
           { role: "user", content },
         ],
         tools: [

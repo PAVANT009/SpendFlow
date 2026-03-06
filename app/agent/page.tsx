@@ -67,7 +67,7 @@ useEffect(() => {
         console.log(chatEnabled, userId);
 
   return (
-    <div className="px-7 py-7 w-full  bg-background h-[1300px]">
+    <div className="px-7 py-7 w-full  bg-background h-fit min-h-[92%]">
       {!conversationId && (
         <>
         <div className=" flex flex-row justify-between">
@@ -93,11 +93,14 @@ useEffect(() => {
         </>
         )}
 
-        <div className="bg-muted/50 my-7 py-3 border border-border rounded-2xl">
+        <div className="my-7 py-3">
+        {!chatEnabled && (
           <div className="w-full flex flex-col my-5 gap-3 justify-center items-center [&>div]:flex [&>div]:flex-row [&>div]:items-center [&>div]:gap-2">
             <div className="font-semibold  "> <BotMessageSquare color="#ffffff " size={19}/> Conversation preview</div>
             <div className="border rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-secondary hover:bg-secondary/80 border-transparent text-secondary-foreground flex items-center gap-1"><GemIcon  size={13}/> Pro feature</div>
           </div>
+          )
+        }
           <ChatComponent chatEnabled={chatEnabled}  conversationId={conversationId}/>
         </div>
     </div>
