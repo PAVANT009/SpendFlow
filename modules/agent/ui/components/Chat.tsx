@@ -5,35 +5,35 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 export default function ChatComponent({
-  conversationId,chatEnabled
+  conversationId, chatEnabled
 }: {
   conversationId: string;
   chatEnabled?: boolean;
 }) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
-  const [convo, setConvo] = useState<{content: string,role:string,id:string}[]>();
-  const [loading,setLoading] = useState(false);
+  const [convo, setConvo] = useState<{ content: string, role: string, id: string }[]>();
+  const [loading, setLoading] = useState(false);
 
-  const fetchData = async() => {
-      // const res = await fetch(`/api/messages/${conversationId}`);      
-      // const data = await res.json();
-      //   setConvo(data);
-      //   console.log(data);
-      // console.log("data",data);
-      try {
-          setLoading(true);                          
-          const res = await fetch(`/api/messages/${conversationId}`);
-          const data = await res.json();
-          setConvo(data);
-        } catch (error) {
-          console.error("Error fetching messages:", error);
-        } finally {
-          setLoading(false);                         
-        }
-      }
+  const fetchData = async () => {
+    // const res = await fetch(`/api/messages/${conversationId}`);      
+    // const data = await res.json();
+    //   setConvo(data);
+    //   console.log(data);
+    // console.log("data",data);
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/messages/${conversationId}`);
+      const data = await res.json();
+      setConvo(data);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
   useEffect(() => {
-    if(!conversationId) return;
+    if (!conversationId) return;
     let ignore = false;
 
     async function load() {
@@ -45,16 +45,16 @@ export default function ChatComponent({
     load();
 
     return () => {
-      ignore = true; 
+      ignore = true;
     };
   }, [conversationId]);
 
   const send = () => {
     if (!input) return;
-    if(!convo) return;
+    if (!convo) return;
 
-    setMessages((m) => [...m, input]);  
-    setMessages((m) => [...m, ""]);     
+    setMessages((m) => [...m, input]);
+    setMessages((m) => [...m, ""]);
 
     setLoading(true)
 
@@ -71,81 +71,84 @@ export default function ChatComponent({
       setMessages((m) => [...m.slice(0, -1), assistantMsg]);
     };
 
-     eventSource.onerror = async () => {
+    eventSource.onerror = async () => {
       eventSource.close();
-      await fetchData(); 
+      await fetchData();
       setLoading(false)
     };
     setInput("");
   };
 
-  console.log("convo",convo);
+  console.log("convo", convo);
 
   return (
     <div>
-      { !convo || convo.length === 0 ? (
-                  <div className="bg-card border border-border flex flex-col gap-2.5 px-4 py-3 mx-4 my-4 rounded-2xl">
-            <div className="bg-background rounded-2xl px-4 py-4 gap-1.5 ">
-              <p className="text-muted-foreground text-[12px]">YOU</p>
-              <p className="text-sm font-semibold">Find subscriptions over $20 and categorize them.</p>
-            </div>
-            <div className="bg-background rounded-2xl px-4 py-4 gap-1.5">
-              <p className="text-muted-foreground text-[12px]">YOU</p>
-              <p className="text-sm font-semibold">Find subscriptions over $20 and categorize them.</p>
-            </div>
-            <div className="bg-background rounded-2xl px-4 py-4 gap-1.5">
-              <p className="text-muted-foreground text-[12px]">YOU</p>
-              <p className="text-sm font-semibold">Find subscriptions over $20 and categorize them.</p>
-            </div>
+      {(!convo || convo.length === 0) && (input.length === 0) ? (
+        <div className="flex flex-col gap-2.5 px-4 py-3 mx-4 my-4 rounded-2xl bg-muted">
+          <div className="bg-background rounded-2xl px-4 py-4 gap-1.5 ">
+            <p
+              onClick={() => setInput("How much did I spend last month compared to this month?")}
+              className="text-sm font-semibold cursor-pointer">How much did I spend last month compared to this month?</p>
           </div>
-      ) : 
-      <div className="px-4 py-2.5 my-3 bg-card border border-border mx-3.5 rounded-2xl">
-        <div className="flex flex-col gap-1.5">
-          {convo?.map((co) => (
-            <div 
-              // className="bg-background rounded-2xl px-4 py-4 gap-1.5 w-fit" key={co.id}
-               key={co.id}
+          <div className="bg-background rounded-2xl px-4 py-4 gap-1.5">
+            <p
+              onClick={() => setInput("What are my top 5 spending categories this year?")}
+              className="text-sm font-semibold cursor-pointer">What are my top 5 spending categories this year?</p>
+          </div>
+          <div className="bg-background rounded-2xl px-4 py-4 gap-1.5">
+            <p
+              onClick={() => setInput("Find subscriptions over $20 and categorize them.")}
+              className="text-sm font-semibold cursor-pointer">Find subscriptions over $20 and categorize them.</p>
+          </div>
+        </div>
+      ) :
+        <div className="px-4 py-2.5 my-3  mx-3.5 rounded-2xl">
+          <div className="flex flex-col gap-1.5">
+            {convo?.map((co) => (
+              <div
+                // className="bg-background rounded-2xl px-4 py-4 gap-1.5 w-fit" key={co.id}
+                key={co.id}
                 className={cn(
-                  "rounded-2xl px-4 py-4 gap-1.5 max-w-[70%]",
+                  "rounded-2xl px-4 py-4 gap-3 max-w-[70%]",
                   co.role === "user"
                     ? "ml-auto bg-primary text-primary-foreground"
                     : "mr-auto bg-background text-foreground"
                 )}
               >
-              <p className="text-muted-foreground text-[12px]">{co.role}</p>
-              <p className="text-sm font-semibold">{co.content}</p>
-            </div>
-          ))}
-          {loading && (
-            <div className="flex flex-col gap-1.5">
-              <div className="ml-auto bg-primary text-primary-foreground rounded-2xl px-4 py-4 gap-1.5 max-w-[70%]">
-                <p className="text-muted-foreground text-[12px]">user</p>
-                <p className="text-sm font-semibold">
-                  {messages[messages.length - 2]}
-                </p>
+                <p className="text-muted-foreground text-[12px]">{co.role}</p>
+                <p className="text-sm font-semibold">{co.content}</p>
               </div>
-              <div className="mr-auto bg-background text-foreground rounded-2xl px-4 py-4 gap-1.5 max-w-[70%]">
-                <p className="text-muted-foreground text-[12px]">assistant</p>
-                <p className="text-sm font-semibold">
-                  <Spinner className="mt-1"/>
-                </p>
+            ))}
+            {loading && (
+              <div className="flex flex-col gap-1.5">
+                <div className="ml-auto bg-primary text-primary-foreground rounded-2xl px-4 py-4 gap-1.5 max-w-[70%]">
+                  <p className="text-muted-foreground text-[12px]">user</p>
+                  <p className="text-sm font-semibold">
+                    {messages[messages.length - 2]}
+                  </p>
+                </div>
+                <div className="mr-auto bg-background text-foreground rounded-2xl px-4 py-4 gap-1.5 max-w-[70%]">
+                  <p className="text-muted-foreground text-[12px]">assistant</p>
+                  <p className="text-sm font-semibold">
+                    <Spinner className="mt-1" />
+                  </p>
+                </div>
               </div>
-            </div>
             )}
-        </div>
+          </div>
 
+        </div>
+      }
+      <div className="px-4 py-2.5 my-3 bg-card border border-border mx-3.5 rounded-2xl">
+        <input
+          disabled={loading || !chatEnabled}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type a message..."
+          className={`w-[93%] border border-border/50 rounded-[10px]  px-3.5 py-2 mr-1 ${!chatEnabled ? "cursor-not-allowed opacity-60" : "cursor-text"}`}
+        />
+        <button className="rounded-2xl bg-primary px-3 py-2 ml-1" onClick={send}>Send</button>
       </div>
-  }
-    <div className="px-4 py-2.5 my-3 bg-card border border-border mx-3.5 rounded-2xl">
-      <input
-        disabled={loading ||  !chatEnabled}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Type a message..."
-        className={`w-[93%] border border-border/50 rounded-[10px]  px-3.5 py-2 mr-1 ${!chatEnabled ? "cursor-not-allowed opacity-60" : "cursor-text"}`}
-      />
-      <button className="rounded-2xl bg-primary px-3 py-2 ml-1" onClick={send}>Send</button>
-  </div>
     </div>
 
   );
