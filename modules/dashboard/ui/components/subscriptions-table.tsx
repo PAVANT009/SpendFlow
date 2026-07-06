@@ -71,7 +71,6 @@ import { cn } from "@/lib/utils"
 import { formatToDDMMYYYY, getDateStatus } from "@/util/useDateDifference"
 import { Skeleton } from "@/components/ui/skeleton"
 import Image from "next/image"
-import MyForm from "./my-form"
 import { EditForm } from "./edit-form"
 import { useCurrency } from "@/currency-context"
 
@@ -110,11 +109,30 @@ const SetState = async (id: string, setState: boolean) => {
   });
 };
 
+const deleteSubscriptions = async (ids: string[]) => {
+  const res = await fetch("/api/subscriptions", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ids }),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Failed to delete subscriptions");
+  }
+
+  return data;
+};
+
 
 export const getColumns = (
   fetchSubscriptions: () => void,
   setSelectedRow: (row: Subscription | undefined) => void,
   setOpenEdit: (open: boolean) => void,
+  handleDelete: (ids: string[]) => Promise<void>,
   convert: (amount: number) => number,
   currency: string,
 ): ColumnDef<Subscription>[] =>  [
@@ -279,7 +297,10 @@ export const getColumns = (
                                 await SetState(row.original.id, false);
                                 fetchSubscriptions() }}><CirclePause color="#f59e0b" /> Hold</DropdownMenuItem>
             )}
-            <DropdownMenuItem className="text-[#dc2626]"><Trash color="#dc2626"/> Delete</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-[#dc2626]"
+              onClick={() => void handleDelete([row.original.id])}
+            ><Trash color="#dc2626"/> Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <Button
@@ -331,13 +352,39 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [isDeleting, setIsDeleting] = React.useState(false)
   const { currency, convert } = useCurrency();
+
+  const handleDelete = React.useCallback(async (ids: string[]) => {
+    if (ids.length === 0) return;
+
+    const itemLabel =
+      ids.length === 1 ? "this subscription" : `${ids.length} subscriptions`;
+
+    if (!window.confirm(`Delete ${itemLabel}? This cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      await deleteSubscriptions(ids);
+      await fetchSubscriptions();
+      setRowSelection({});
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to delete subscriptions";
+      console.error("Failed to delete subscriptions:", error);
+      alert(message);
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [fetchSubscriptions]);
 
 
   const table = useReactTable({
     data,
     columns: getColumns(
-      fetchSubscriptions,setSelectedRow,setOpenEdit,convert,currency),
+      fetchSubscriptions, setSelectedRow, setOpenEdit, handleDelete, convert, currency),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -392,6 +439,7 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
         {table.getSelectedRowModel().rows.length > 0 && (
           <div className="ml-auto flex gap-4">
           <Button className="text-[#22c55e]  border border-border  rounded-md bg-transparent hover:bg-background"
+            disabled={isDeleting}
             onClick={async () => {
 
               const selectedRows = table.getSelectedRowModel().rows;
@@ -407,6 +455,7 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
           ><RotateCcw color="#22c55e"/> Renew
           </Button>
           <Button className="text-[#f59e0b]  border border-border   rounded-md bg-transparent"
+            disabled={isDeleting}
             onClick={async () => {
 
               const selectedRows = table.getSelectedRowModel().rows;
@@ -420,6 +469,16 @@ export default function SubscriptionTable({ data, loading, fetchSubscriptions }:
               setRowSelection({});
             }}
           ><CirclePause color="#f59e0b" /> Hold
+          </Button>
+          <Button
+            className="text-[#dc2626] border border-border rounded-md bg-transparent hover:bg-background"
+            disabled={isDeleting}
+            onClick={() =>
+              void handleDelete(
+                table.getSelectedRowModel().rows.map((row) => row.original.id)
+              )
+            }
+          ><Trash color="#dc2626"/> Delete
           </Button>
           </div>
         )}

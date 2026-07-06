@@ -2,7 +2,7 @@ import { auth } from "@/app/lib/auth";
 import { db } from "@/app/db";
 import { subscription } from "@/app/db/schema";
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
@@ -82,15 +82,29 @@ export async function GET(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const session = await auth.api.getSession({ headers: req.headers });
-    if(!session || !session.user) {
+
+    if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id;
+    const body = await req.json().catch(() => null);
+    const ids = Array.isArray(body?.ids)
+      ? body.ids.filter((id: unknown): id is string => typeof id === "string" && id.length > 0)
+      : typeof body?.id === "string" && body.id.length > 0
+        ? [body.id]
+        : [];
 
-    db.delete(subscription).where(eq(subscription.userId, userId));
-  }
-  catch (error) {
+    if (ids.length === 0) {
+      return NextResponse.json({ error: "Missing subscription id" }, { status: 400 });
+    }
+
+    await db
+      .delete(subscription)
+      .where(and(eq(subscription.userId, userId), inArray(subscription.id, ids)));
+
+    return NextResponse.json({ success: true, deletedIds: ids });
+  } catch (error) {
     return NextResponse.json({ error: `Failed to delete,error: ${error}` }, { status: 500 });
   }
 }
